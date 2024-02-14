@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package curie;
+
+import "gossip_data.proto";
+
+import "google/protobuf/empty.proto";
+
+option go_package = "flag-example/proto";
+
+service CurieNodeProposer{
+    rpc GetBlock(google.protobuf.Empty) returns (CurieBlock) {}
+    
+    rpc ProposeCurieBlockForOG(SignedCurieBlockForOG) returns (ProposeResponse) {}
+
+    rpc ProposeCurieBlockForNG(SignedCurieBlockForNG) returns (ProposeResponse) {}
+
+    rpc SendProposerPublicKey(ProposerPublicKeyRequest) returns (ProposeResponse) {}
+}
+
+message ProposerPublicKeyRequest {
+    string publicKey = 1;
+}
+
+message ProposeResponse {
+    string message = 1;
+}

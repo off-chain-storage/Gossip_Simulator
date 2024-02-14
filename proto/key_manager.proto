@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package curie;
+
+option go_package = "flag-example/proto";
+
+message SignRequest {
+    string public_key = 1;
+    bytes signing_msg = 2;
+}
+
+message SignResponse {
+    enum Status {
+        UNKNOWN = 0;
+        SUCCESS = 1;
+        ERROR = 2;
+    }
+
+    bytes signature = 1;
+
+    Status status = 2;
+}

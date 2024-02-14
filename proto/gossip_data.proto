@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package curie;
+
+option go_package = "flag-example/proto";
+
+// 원본 블록 데이터
+message CurieBlock {
+    bytes dummy_data = 1;
+}
+
+// ECDSA Signature
+message Signature {
+    bytes sig_r = 1;
+    bytes sig_s = 2;
+}
+
+// 원본 블록 가십 데이터
+// 1. 서명된 블록 데이터 Gossip
+// 2. 원본 블록의 Hash Value Gossip
+message SignedCurieBlockForOG {
+    CurieBlock body = 1;
+    Signature signature = 2;
+}
+
+// 새로운 가십을 위한 암호화된 Hash Value
+// 1. 암호화된 블록 Hash Value
+message SignedCurieBlockForNG {
+    Signature signature = 1;
+}

@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  curie-subscriber_1:
+    image: jinbum99/curie-node:latest
+    container_name: curie-subscriber_1
+    networks:
+      - simnet
+    ports:
+      - 30030:30000
+    command:
+      - ./curie-node
+      - --no-discovery=false
+      - --IsPublisher=false
+      - --p2p-host-ip=0.0.0.0
+      - --p2p-tcp-port=30030
+      - --bootstrap-node=210.125.31.147:30000@16Uiu2HAm3YS3Sk5ZXHmZ74oLSfE8Pp27GNBG7emjX68XV7jhMPBL
+      - --redis-addr=210.125.31.147:30005
+      - --rpc-host=0.0.0.0
+      - --rpc-port=6060
+    restart: unless-stopped
+
+  curie-subscriber_2:
+    image: jinbum99/curie-node:latest
+    container_name: curie-subscriber_2
+    networks:
+      - simnet
+    ports:
+      - 30040:30000
+    command:
+      - ./curie-node
+      - --no-discovery=false
+      - --IsPublisher=false
+      - --p2p-host-ip=0.0.0.0
+      - --p2p-tcp-port=30040
+      - --bootstrap-node=210.125.31.147:30000@16Uiu2HAm3YS3Sk5ZXHmZ74oLSfE8Pp27GNBG7emjX68XV7jhMPBL
+      - --redis-addr=210.125.31.147:30005
+      - --rpc-host=0.0.0.0
+      - --rpc-port=6060
+    restart: unless-stopped
+
+networks:
+  simnet:
+    name: simnet
+    driver: bridge
+    external: true

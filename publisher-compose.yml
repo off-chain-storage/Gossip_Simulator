@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  curie-publisher:
+    image: jinbum99/curie-node:latest
+    container_name: curie-publisher
+    networks:
+      - simnet
+    ports:
+      - 30000:30000
+      - 30020:30020
+    command: ["./curie-node", "--no-discovery=true", "--p2p-host-ip=0.0.0.0", "--p2p-tcp-port=30000", "--IsPublisher=true", "--redis-addr=210.125.31.147:30005", "--rpc-host=0.0.0.0", "--rpc-port=30020"]
+    restart: unless-stopped
+
+  curie-proposer:
+    image: jinbum99/curie-node:latest
+    container_name: curie-proposer
+    depends_on:
+      - curie-publisher
+    networks:
+      - simnet
+    ports:
+      - 30010:30010
+    command: ["./proposer", "--http-server-host=0.0.0.0", "--http-server-port=30010", "--curie-rpc-provider=curie-publisher:30020"]
+    restart: unless-stopped
+
+networks:
+  simnet:
+    name: simnet
+    driver: bridge
+    external: true

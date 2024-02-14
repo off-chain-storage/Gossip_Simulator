@@ -72,9 +72,6 @@ func (s *Service) listenForNewNodes(topic string) {
 			}
 
 			for p := range peers {
-
-				log.Info(p.String())
-
 				go func(peer *peer.AddrInfo) {
 					if err := s.connectWithPeer(s.ctx, *peer); err != nil {
 						log.WithError(err).Tracef("Could not connect with peer %s for topic %s", peer.String(), topic)

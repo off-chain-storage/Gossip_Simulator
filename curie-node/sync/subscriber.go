@@ -66,6 +66,7 @@ func (s *Service) subscribeWithBase(topic string, handle subHandler) *pubsub.Sub
 		for {
 			// Subscriber 쪽에서 메세지를 수신하더라도 여기 이후로 넘어가지 않음
 			msg, err := sub.Next(s.ctx)
+			log.Info("msg is received")
 			if err != nil {
 				// context or subscription is cancelled.
 				if err != pubsub.ErrSubscriptionCancelled {

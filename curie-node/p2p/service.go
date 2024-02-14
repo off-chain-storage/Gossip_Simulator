@@ -16,6 +16,7 @@ import (
 	dht "github.com/libp2p/go-libp2p-kad-dht"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	"github.com/libp2p/go-libp2p/core/host"
+	"github.com/libp2p/go-libp2p/core/network"
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/multiformats/go-multiaddr"
 	"go.opencensus.io/trace"
@@ -208,9 +209,9 @@ func (s *Service) connectWithPeer(ctx context.Context, info peer.AddrInfo) error
 	}
 
 	// 이미 연결된 ID라면 연결 시도 X
-	// if s.host.Network().Connectedness(info.ID) == network.Connected {
-	// 	return nil
-	// }
+	if s.host.Network().Connectedness(info.ID) == network.Connected {
+		return nil
+	}
 
 	ctx, cancel := context.WithTimeout(ctx, maxDialTimeout)
 	defer cancel()

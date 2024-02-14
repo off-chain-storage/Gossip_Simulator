@@ -118,7 +118,7 @@ var (
 	P2PTCPPort = &cli.IntFlag{
 		Name:  "p2p-tcp-port",
 		Usage: "The port used by libp2p.",
-		Value: 30000,
+		Value: 7654,
 	}
 	// // P2PIP defines the local IP to be used by libp2p.
 	// P2PIP = &cli.StringFlag{
@@ -297,7 +297,7 @@ var (
 	WebPortFlag = &cli.UintFlag{
 		Name:  "web-port",
 		Usage: "Web Server Port",
-		Value: 30020,
+		Value: 8080,
 	}
 	// MonitorUDPPortFlag는 Monitor UDP Port를 지정
 	MonitorUDPPortFlag = &cli.UintFlag{

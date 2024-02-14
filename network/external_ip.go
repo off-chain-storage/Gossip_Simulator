@@ -3,8 +3,6 @@ package network
 import (
 	"net"
 	"sort"
-
-	"github.com/sirupsen/logrus"
 )
 
 // External IPV4 주소를 libp2p 형식으로 변환.
@@ -35,30 +33,6 @@ func ipAddrs() ([]net.IP, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	for _, iface := range ifaces {
-		// // 인터페이스가 활성화되어 있지 않으면 다음 인터페이스로 넘어감
-		// if iface.Flags&net.FlagUp == 0 {
-		// 	continue
-		// }
-		// // 루프백 인터페이스인 경우 다음 인터페이스로 넘어감
-		// if iface.Flags&net.FlagLoopback != 0 {
-		// 	continue
-		// }
-		// 인터페이스에 할당된 IP 주소 목록을 가져옴
-		addrs, err := iface.Addrs()
-		if err != nil {
-			return nil, err
-		}
-		// IP 주소 목록을 순회하면서 유효한 IP 주소만 추출
-		for _, addr := range addrs {
-			switch v := addr.(type) {
-			case *net.IPNet:
-				logrus.Info(v.IP)
-			}
-		}
-	}
-
 	var ipAddrs []net.IP
 	for _, iface := range ifaces {
 		if iface.Flags&net.FlagUp == 0 {

@@ -85,8 +85,6 @@ func NewService(ctx context.Context, cfg *Config) (*Service, error) {
 	// 뭔가 내 네트워크 정보 가져오는 것 같은데 자세히는 모르겠다,,
 	ipAddr := curienetwork.IPAddr()
 
-	log.Info("IP Address is ", ipAddr)
-
 	// private key 생성하기
 	s.privKey, err = privKey(s.cfg)
 	if err != nil {

@@ -85,17 +85,17 @@ func (s *Service) buildOptions(ip net.IP, priKey *ecdsa.PrivateKey) []libp2p.Opt
 
 	options = append(options, libp2p.DisableRelay())
 
-	if cfg.HostAddress != "" {
-		options = append(options, libp2p.AddrsFactory(func(addrs []ma.Multiaddr) []ma.Multiaddr {
-			external, err := MultiAddressBuilder(cfg.HostAddress, cfg.TCPPort)
-			if err != nil {
-				log.WithError(err).Error("Unable to create external multiaddress")
-			} else {
-				addrs = append(addrs, external)
-			}
-			return addrs
-		}))
-	}
+	// if cfg.HostAddress != "" {
+	// 	options = append(options, libp2p.AddrsFactory(func(addrs []ma.Multiaddr) []ma.Multiaddr {
+	// 		external, err := MultiAddressBuilder(cfg.HostAddress, cfg.TCPPort)
+	// 		if err != nil {
+	// 			log.WithError(err).Error("Unable to create external multiaddress")
+	// 		} else {
+	// 			addrs = append(addrs, external)
+	// 		}
+	// 		return addrs
+	// 	}))
+	// }
 
 	// ping service 금지
 	options = append(options, libp2p.Ping(false))

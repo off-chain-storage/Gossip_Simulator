@@ -32,8 +32,8 @@ func MultiAddressBuilder(ipAddr string, port uint) (ma.Multiaddr, error) {
 // libp2p host 빌드를 위한 옵션
 func (s *Service) buildOptions(ip net.IP, priKey *ecdsa.PrivateKey) []libp2p.Option {
 	cfg := s.cfg
-	// listen, err := MultiAddressBuilder("0.0.0.0", cfg.TCPPort)
-	listen, err := MultiAddressBuilder(ip.String(), cfg.TCPPort)
+	listen, err := MultiAddressBuilder("0.0.0.0", cfg.TCPPort)
+	// listen, err := MultiAddressBuilder(ip.String(), cfg.TCPPort)
 	if err != nil {
 		log.WithError(err).Fatal("Failed to p2p listen")
 	}

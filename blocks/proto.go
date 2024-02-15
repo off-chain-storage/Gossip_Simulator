@@ -7,7 +7,6 @@ import (
 	curiepb "flag-example/proto"
 
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -99,27 +98,21 @@ func initBlockFromProto(pb *curiepb.CurieBlock) (*CurieBlock, error) {
 }
 
 func initSignedBlockForOGFromProto(pb *curiepb.SignedCurieBlockForOG) (*SignedCurieBlockForOG, error) {
-	logrus.Info("@@ STEP_2_1 @@")
 	block, err := initBlockFromProto(pb.Body)
 	if err != nil {
 		return nil, err
 	}
-	logrus.Info("Dummy Data is : ", len(block.dummyData))
-	logrus.Info("Block Body is : ", len(block.Body()))
 
-	logrus.Info("@@ STEP_2_2 @@")
 	sig, err := curieecdsad.InitSignFromProto(pb.Signature)
 	if err != nil {
 		return nil, err
 	}
 
-	logrus.Info("@@ STEP_2_3 @@")
 	b := &SignedCurieBlockForOG{
 		body:      block,
 		signature: sig,
 	}
 
-	logrus.Info("@@ STEP_2_4 @@")
 	return b, nil
 }
 

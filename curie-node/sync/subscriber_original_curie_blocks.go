@@ -8,6 +8,8 @@ import (
 )
 
 func (s *Service) originalCurieBlockSubscriber(ctx context.Context, msg proto.Message) error {
+	s.getPubKey()
+
 	signed, err := blocks.NewSignedBlock(msg)
 	if err != nil {
 		return err

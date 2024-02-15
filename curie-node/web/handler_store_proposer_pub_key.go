@@ -8,6 +8,9 @@ import (
 )
 
 func (s *Service) StoreProposerPubKey(c fiber.Ctx) error {
+
+	log.Info(s.cfg.DB)
+
 	// Subscriber
 	pubKey, err := s.cfg.DB.GetDataFromRedis("Proposer")
 	if err != nil {

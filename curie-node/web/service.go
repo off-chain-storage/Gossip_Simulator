@@ -56,7 +56,7 @@ func (s *Service) Start() {
 
 func (s *Service) InitializeRoutes() error {
 	// Register Proposer Web Server's Router
-	if s.router == nil {
+	if s.cfg.Router == nil {
 		return errors.New("no fiber router on server")
 	}
 

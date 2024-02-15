@@ -4,26 +4,29 @@ import (
 	"crypto/ecdsa"
 	"flag-example/crypto/ecdsa/common"
 
-	"github.com/sirupsen/logrus"
+	"github.com/mohae/deepcopy"
 )
+
+var publicKey common.PublicKey
 
 type PublicKey struct {
 	p *ecdsa.PublicKey
 }
 
 func GetPublicKey() common.PublicKey {
-	return &PublicKey{}
+	return publicKey
 }
 
-func PublicKeyFromProposer(pubKey *ecdsa.PublicKey) *PublicKey {
-	return &PublicKey{p: pubKey}
+func PublicKeyFromProposer(pubKey *ecdsa.PublicKey) common.PublicKey {
+	publicKey = &PublicKey{p: pubKey}
+
+	return publicKey
 }
 
-// Copy the public key to a new pointer reference.
 func (p *PublicKey) Copy() common.PublicKey {
-
-	logrus.Info(p.p)
-
-	np := *p.p
-	return &PublicKey{p: &np}
+	config, ok := deepcopy.Copy(*p).(common.PublicKey)
+	if !ok {
+		config = publicKey
+	}
+	return config
 }

@@ -90,6 +90,7 @@ func (s *Service) subscribeWithBase(topic string, validator wrappedVal, handle s
 	messageLoop := func() {
 		for {
 			// Subscriber 쪽에서 메세지를 수신하더라도 여기 이후로 넘어가지 않음 - 해결
+			log.Info("Subscriber is waiting for message...")
 			msg, err := sub.Next(s.ctx)
 			if err != nil {
 				if err != pubsub.ErrSubscriptionCancelled {
@@ -116,8 +117,6 @@ func (s *Service) subscribeWithBase(topic string, validator wrappedVal, handle s
 
 func (s *Service) wrapAndReportValidation(topic string, v wrappedVal) (string, pubsub.ValidatorEx) {
 	return topic, func(ctx context.Context, pid peer.ID, msg *pubsub.Message) (res pubsub.ValidationResult) {
-		log.Infof("data bytes is %d bytes.", len(msg.Data))
-
 		b, err := v(ctx, pid, msg)
 		if b == pubsub.ValidationReject {
 			fields := logrus.Fields{

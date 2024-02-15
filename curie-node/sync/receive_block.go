@@ -1,8 +1,7 @@
-package simulator
+package sync
 
 import (
 	"context"
-	"crypto/ecdsa"
 	"flag-example/blocks/interfaces"
 	"fmt"
 
@@ -10,11 +9,11 @@ import (
 )
 
 type BlockReceiver interface {
-	ReceiveOGBlock(ctx context.Context, block interfaces.SignedCurieBlock, pubKey *ecdsa.PublicKey) error
+	ReceiveOGBlock(ctx context.Context, block interfaces.SignedCurieBlock) error
 	ReceiveNGBlock(ctx context.Context, block interfaces.SignedCurieBlock) error
 }
 
-func ReceiveOGBlock(ctx context.Context, block interfaces.SignedCurieBlock, pubKey *ecdsa.PublicKey) error {
+func (s *Service) ReceiveOGBlock(ctx context.Context, block interfaces.SignedCurieBlock) error {
 	/* Check Received Data for Validation */
 
 	logrus.Info("@@ STEP_2_1 @@")
@@ -31,7 +30,7 @@ func ReceiveOGBlock(ctx context.Context, block interfaces.SignedCurieBlock, pubK
 	logrus.Info("@@ STEP_2_3 @@")
 
 	// 2. 공개키 이용하여 Verify() 함수 호출하기
-	if sig.Verify(pubKey, hash) {
+	if sig.Verify(s.pubKey, hash) {
 		// If it is valid, Send Normal ACK to Check Node
 		fmt.Println("Received Data is Valid")
 	} else {

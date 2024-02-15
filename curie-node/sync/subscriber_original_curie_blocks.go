@@ -23,7 +23,7 @@ func (s *Service) originalCurieBlockSubscriber(ctx context.Context, msg proto.Me
 	}
 
 	log.Info("@@ STEP_3 @@")
-	if err := s.cfg.receiveModule.ReceiveOGBlock(ctx, signed, s.pubKey); err != nil {
+	if err := s.cfg.receiveModule.ReceiveOGBlock(ctx, signed); err != nil {
 		return err
 	}
 

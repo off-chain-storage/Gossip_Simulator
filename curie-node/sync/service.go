@@ -7,18 +7,13 @@ import (
 	"flag-example/curie-node/db"
 	"flag-example/curie-node/monitor"
 	"flag-example/curie-node/p2p"
-	"flag-example/curie-node/simulator"
 )
 
 type config struct {
 	p2p           p2p.P2P
 	curieDB       db.ReadOnlyRedisDB
 	monitor       monitor.Monitor
-	receiveModule receiveService
-}
-
-type receiveService interface {
-	simulator.BlockReceiver
+	receiveModule BlockReceiver
 }
 
 type Service struct {

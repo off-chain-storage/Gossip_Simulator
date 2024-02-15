@@ -1,12 +1,14 @@
 package ecdsad
 
 import (
+	"bytes"
 	"crypto/ecdsa"
 	"flag-example/crypto/ecdsa/common"
 	curiepb "flag-example/proto"
 
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -24,8 +26,17 @@ func InitSignFromProto(i interface{}) (common.Signature, error) {
 }
 
 func (s *Signature) Verify(pubKey *ecdsa.PublicKey, msg []byte) bool {
-	comPubKey := crypto.CompressPubkey(pubKey)
-	return crypto.VerifySignature(comPubKey, msg, s.sig)
+	sigPublicKey, err := crypto.Ecrecover(msg, s.sig)
+	if err != nil {
+		logrus.WithError(err).Error("Failed to recover public key")
+		return false
+	}
+
+	if (sigPublicKey != nil) && bytes.Equal(crypto.CompressPubkey(pubKey), sigPublicKey) {
+		return true
+	} else {
+		return false
+	}
 }
 
 func (s *Signature) Marshal() []byte {

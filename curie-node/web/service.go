@@ -44,7 +44,7 @@ func NewService(ctx context.Context, cfg *Config) (*Service, error) {
 
 func (s *Service) Start() {
 	// Setup the Http Server Address
-	address := fmt.Sprintf("%s:%s", s.host, s.port)
+	address := fmt.Sprintf("%s:%s", s.cfg.Host, s.cfg.Port)
 
 	// Start the Web Server
 	go func() {

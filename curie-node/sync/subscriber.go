@@ -85,7 +85,8 @@ func (s *Service) subscribeWithBase(topic string, validator wrappedVal, handle s
 			return
 		}
 
-		// 여기에 msg Decoding 추가해야 함
+		log.Infof("data bytes is %d bytes.", len(msg.Data))
+
 		if err := handle(ctx, msg.ValidatorData.(proto.Message)); err != nil {
 			log.WithError(err).Error("Could not handle message")
 			return

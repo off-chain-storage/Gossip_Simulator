@@ -12,6 +12,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/crypto/secp256k1"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -40,6 +41,11 @@ func (*KeyManager) GenerateKey() error {
 	}
 	pubKey := &privKey.PublicKey
 
+	logrus.Info("Key Generation, ECDSA PubKey is ", pubKey)
+	logrus.Info("Key Generation, String PubKey is ", curieecdsa.ConvertToStringEcdsaPubKey(pubKey))
+
+	logrus.Info("Key Generation, ECDSA PrivKey is ", privKey)
+
 	lock.Lock()
 	publicKey = pubKey
 	privateKeyCache[curieecdsa.ConvertToStringEcdsaPubKey(pubKey)] =
@@ -56,6 +62,8 @@ func (*KeyManager) Sign(ctx context.Context, req *curiepb.SignRequest) (curieecd
 	if !ok {
 		return nil, errors.New("secret key not found for public key")
 	}
+
+	logrus.Info("Before Signing, ECDSA PrivKey is ", privateKey)
 
 	return privateKey.Sign(req.SigningMsg), nil
 }

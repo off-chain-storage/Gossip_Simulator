@@ -5,7 +5,6 @@ import (
 	"flag-example/crypto/ecdsa/common"
 
 	"github.com/mohae/deepcopy"
-	"github.com/sirupsen/logrus"
 )
 
 var publicKey *PublicKey
@@ -16,8 +15,6 @@ type PublicKey struct {
 
 func PublicKeyFromProposer(pubKey *ecdsa.PublicKey) {
 	publicKey = &PublicKey{p: pubKey}
-
-	logrus.Info("Public key set", publicKey.p)
 }
 
 func GetPublicKey() *ecdsa.PublicKey {

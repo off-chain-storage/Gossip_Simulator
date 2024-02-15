@@ -18,6 +18,7 @@ func (s *Service) ReceiveOGBlock(ctx context.Context, block interfaces.SignedCur
 
 	// Hashing Received Data
 	hash := block.Hash()
+	logrus.Info("Hash Value is ", len(hash))
 
 	// Decryption Signature && Compare Hashing and Decryption Signature
 	// 1. 수신 데이터로부터 서명 데이터 추출하기

@@ -24,10 +24,9 @@ func (s *Service) decodePubsubMessage(msg *pubsub.Message) (proto.Message, error
 		return nil, p2p.ErrMessageNotMapped
 	}
 
-	// m, ok := proto.Clone(base).(proto.Message)
-	// if !ok {
-	// 	return nil, errors.Errorf("message of %T does not support marshaller interface", base)
-	// }
+	if err := proto.Unmarshal(msg.Data, base); err != nil {
+		return nil, err
+	}
 
 	return base, nil
 }

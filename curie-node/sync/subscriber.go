@@ -85,8 +85,6 @@ func (s *Service) subscribeWithBase(topic string, validator wrappedVal, handle s
 			return
 		}
 
-		log.Infof("data bytes is %d bytes.", len(msg.Data))
-
 		if err := handle(ctx, msg.ValidatorData.(proto.Message)); err != nil {
 			log.WithError(err).Error("Could not handle message")
 			return
@@ -121,6 +119,8 @@ func (s *Service) subscribeWithBase(topic string, validator wrappedVal, handle s
 
 func (s *Service) wrapAndReportValidation(topic string, v wrappedVal) (string, pubsub.ValidatorEx) {
 	return topic, func(ctx context.Context, pid peer.ID, msg *pubsub.Message) (res pubsub.ValidationResult) {
+		log.Infof("data bytes is %d bytes.", len(msg.Data))
+
 		b, err := v(ctx, pid, msg)
 		if b == pubsub.ValidationReject {
 			fields := logrus.Fields{

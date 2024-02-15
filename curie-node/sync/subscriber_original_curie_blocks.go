@@ -9,19 +9,25 @@ import (
 
 func (s *Service) originalCurieBlockSubscriber(ctx context.Context, msg proto.Message) error {
 	log.Info("@@ STEP_1 @@")
-	log.Info(msg.ProtoReflect().Get(msg.ProtoReflect().Descriptor().Fields().ByName("Body")))
-	log.Info(msg.ProtoReflect().Get(msg.ProtoReflect().Descriptor().Fields().ByName("Signature")))
+	data, err := proto.Marshal(msg)
+	if err != nil {
+		log.WithError(err).Error("Failed to marshal message")
+		return err
+	}
+	log.Infof("Message size: %d bytes", len(data))
+
+	log.Info("@@ STEP_2 @@")
 	signed, err := blocks.NewSignedBlock(msg)
 	if err != nil {
 		return err
 	}
 
-	log.Info("@@ STEP_2 @@")
+	log.Info("@@ STEP_3 @@")
 	if err := s.cfg.receiveModule.ReceiveOGBlock(ctx, signed, s.pubKey); err != nil {
 		return err
 	}
 
-	log.Info("@@ STEP_3 @@")
+	log.Info("@@ STEP_4 @@")
 	if err := s.cfg.monitor.SendUDPMessage(s.cfg.p2p.PeerID().String()); err != nil {
 		return err
 	}

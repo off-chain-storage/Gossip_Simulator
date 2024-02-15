@@ -99,8 +99,7 @@ func initBlockFromProto(pb *curiepb.CurieBlock) (*CurieBlock, error) {
 }
 
 func initSignedBlockForOGFromProto(pb *curiepb.SignedCurieBlockForOG) (*SignedCurieBlockForOG, error) {
-	logrus.Info(pb.GetBody())
-
+	logrus.Info(pb.Body.GetDummyData())
 	logrus.Info(pb.GetSignature())
 
 	block, err := initBlockFromProto(pb.Body)

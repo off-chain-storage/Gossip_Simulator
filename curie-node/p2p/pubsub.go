@@ -110,7 +110,7 @@ func (s *Service) pubsubOptions() []pubsub.Option {
 		// pubsub.WithPeerOutboundQueueSize(int(s.cfg.QueueSize)),
 
 		// 최대 메세지 크기 설정 - 일단 제외
-		// pubsub.WithMaxMessageSize(int(params.BeaconConfig().GossipMaxSize)),
+		pubsub.WithMaxMessageSize(10 * 1 << 20),
 
 		// 메세지 검증 큐 크기 설정 - 일단 제외
 		// pubsub.WithValidateQueueSize(int(s.cfg.QueueSize)),

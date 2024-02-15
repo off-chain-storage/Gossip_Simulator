@@ -76,8 +76,6 @@ func (s *Service) subscribeWithBase(topic string, validator wrappedVal, handle s
 		ctx, cancel := context.WithTimeout(s.ctx, pubsubMessageTimeout)
 		defer cancel()
 
-		log.Info("msg is received")
-
 		if msg.ValidatorData == nil {
 			log.Error("Received nil message on pubsub")
 			return

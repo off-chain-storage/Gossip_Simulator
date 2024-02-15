@@ -32,7 +32,7 @@ type Config struct {
 	// ClockWaiter         startup.ClockWaiter
 }
 
-const defaultPubsubQueueSize = 600
+const defaultPubsubQueueSize = 5000
 
 func validateConfig(cfg *Config) *Config {
 	if cfg.QueueSize == 0 {

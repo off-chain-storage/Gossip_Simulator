@@ -15,15 +15,11 @@ func (s *Service) SendUDPMessage(msg string) error {
 		s.SetUDPConn()
 	}
 
-	log.Info("1 Sent UDP message: ", msg)
-
 	_, err := s.conn.Write([]byte(msg + "\n"))
 	if err != nil {
 		log.WithError(err).Error("Failed to send UDP message")
 		return err
 	}
-
-	log.Info("2 Sent UDP message: ", msg)
 
 	return nil
 }

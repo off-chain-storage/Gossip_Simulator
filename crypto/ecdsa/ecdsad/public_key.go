@@ -3,6 +3,8 @@ package ecdsad
 import (
 	"crypto/ecdsa"
 	"flag-example/crypto/ecdsa/common"
+
+	"github.com/sirupsen/logrus"
 )
 
 type PublicKey struct {
@@ -19,6 +21,9 @@ func PublicKeyFromProposer(pubKey *ecdsa.PublicKey) *PublicKey {
 
 // Copy the public key to a new pointer reference.
 func (p *PublicKey) Copy() common.PublicKey {
+
+	logrus.Info(p.p)
+
 	np := *p.p
 	return &PublicKey{p: &np}
 }

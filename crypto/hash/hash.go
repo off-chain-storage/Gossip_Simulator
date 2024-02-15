@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/minio/sha256-simd"
+	"github.com/sirupsen/logrus"
 )
 
 var sha256Pool = sync.Pool{New: func() interface{} {
@@ -12,6 +13,8 @@ var sha256Pool = sync.Pool{New: func() interface{} {
 }}
 
 func Hash(data []byte) []byte {
+	logrus.Info("@@ Before Hashing @@", len(data))
+
 	h, ok := sha256Pool.Get().(hash.Hash)
 	if !ok {
 		h = sha256.New()
@@ -19,10 +22,7 @@ func Hash(data []byte) []byte {
 	defer sha256Pool.Put(h)
 	h.Reset()
 
-	var b []byte
+	logrus.Info("@@ After Hashing @@", len(h.Sum(nil)))
 
-	h.Write(data)
-	h.Sum(b[:0])
-
-	return b
+	return h.Sum(nil)
 }

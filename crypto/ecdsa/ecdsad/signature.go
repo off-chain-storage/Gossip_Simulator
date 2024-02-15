@@ -32,15 +32,31 @@ func (s *Signature) Verify(pubKey *ecdsa.PublicKey, msg []byte) bool {
 		return false
 	}
 
-	if (sigPublicKey != nil) && bytes.Equal(crypto.CompressPubkey(pubKey), sigPublicKey) {
+	k, err := crypto.DecompressPubkey(sigPublicKey)
+	if err != nil {
+		logrus.WithError(err).Error("Failed to decompress public key")
+		return false
+	}
+
+	if (sigPublicKey != nil) && bytes.Equal(crypto.CompressPubkey(k), crypto.CompressPubkey(pubKey)) {
 		return true
 	} else {
 		logrus.Info("Original Public Key: ", crypto.CompressPubkey(pubKey))
-		logrus.Info("Recovered Public Key: ", sigPublicKey)
-		logrus.Info(bytes.Equal(crypto.CompressPubkey(pubKey), sigPublicKey))
+		logrus.Info("Recovered Public Key: ", crypto.CompressPubkey(k))
+		logrus.Info(bytes.Equal(crypto.CompressPubkey(k), crypto.CompressPubkey(pubKey)))
 		logrus.Info("Signature: ", s.sig)
 		return false
 	}
+
+	// if (sigPublicKey != nil) && bytes.Equal(crypto.CompressPubkey(pubKey), sigPublicKey) {
+	// 	return true
+	// } else {
+	// 	logrus.Info("Original Public Key: ", crypto.CompressPubkey(pubKey))
+	// 	logrus.Info("Recovered Public Key: ", sigPublicKey)
+	// 	logrus.Info(bytes.Equal(crypto.CompressPubkey(pubKey), sigPublicKey))
+	// 	logrus.Info("Signature: ", s.sig)
+	// 	return false
+	// }
 }
 
 func (s *Signature) Marshal() []byte {

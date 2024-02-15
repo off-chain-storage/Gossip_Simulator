@@ -61,6 +61,11 @@ func (s *Service) subscribeWithBase(topic string, validator wrappedVal, handle s
 		return nil
 	}
 
+	if err := s.cfg.p2p.PubSub().RegisterTopicValidator(topic, validator); err != nil {
+		log.WithError(err).Error("Could not register topic validator")
+		return nil
+	}
+
 	sub, err := s.cfg.p2p.SubscribeToTopic(topic)
 	if err != nil {
 		log.WithError(err).Error("Could not subscribe topic")
@@ -73,6 +78,11 @@ func (s *Service) subscribeWithBase(topic string, validator wrappedVal, handle s
 		defer cancel()
 
 		log.Info("msg is received")
+
+		if msg.ValidatorData == nil {
+			log.Error("Received nil message on pubsub")
+			return
+		}
 
 		// 여기에 msg Decoding 추가해야 함
 		if err := handle(ctx, msg.ValidatorData.(proto.Message)); err != nil {

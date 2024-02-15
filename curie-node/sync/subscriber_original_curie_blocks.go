@@ -9,6 +9,8 @@ import (
 
 func (s *Service) originalCurieBlockSubscriber(ctx context.Context, msg proto.Message) error {
 	log.Info("@@ STEP_1 @@")
+	log.Info(msg.ProtoReflect().Get(msg.ProtoReflect().Descriptor().Fields().ByName("Body")))
+	log.Info(msg.ProtoReflect().Get(msg.ProtoReflect().Descriptor().Fields().ByName("Signature")))
 	signed, err := blocks.NewSignedBlock(msg)
 	if err != nil {
 		return err

@@ -4,6 +4,8 @@ import (
 	"crypto/ecdsa"
 	"flag-example/crypto/ecdsa/common"
 	curiepb "flag-example/proto"
+	"fmt"
+	"log"
 
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
@@ -25,20 +27,35 @@ func InitSignFromProto(i interface{}) (common.Signature, error) {
 }
 
 func (s *Signature) Verify(pubKey *ecdsa.PublicKey, msg []byte) bool {
+	// if crypto.VerifySignature(crypto.CompressPubkey(pubKey), msg, s.sig) {
+	// 	return true
+	// } else {
+	// 	logrus.Info("Original Public Key: ", crypto.CompressPubkey(pubKey))
+	// 	logrus.Info("Signature: ", s.sig)
+	// 	return false
+	// }
 
-	if crypto.VerifySignature(crypto.CompressPubkey(pubKey), msg, s.sig) {
-		return true
-	} else {
-		logrus.Info("Original Public Key: ", crypto.CompressPubkey(pubKey))
-		logrus.Info("Signature: ", s.sig)
+	sigPublicKey, err := crypto.Ecrecover(msg, s.sig)
+	if err != nil {
+		logrus.WithError(err).Error("Failed to recover public key")
 		return false
 	}
 
-	// sigPublicKey, err := crypto.Ecrecover(msg, s.sig)
-	// if err != nil {
-	// 	logrus.WithError(err).Error("Failed to recover public key")
-	// 	return false
-	// }
+	recoveredPubKey, err := crypto.UnmarshalPubkey(sigPublicKey)
+	if err != nil {
+		log.Fatalf("Failed to unmarshal public key: %v", err)
+	}
+
+	// 실제 주소 비교
+	recoveredAddr := crypto.PubkeyToAddress(*recoveredPubKey)
+	originalAddr := crypto.PubkeyToAddress(*pubKey)
+	if recoveredAddr.Hex() == originalAddr.Hex() {
+		return true
+	} else {
+		fmt.Println("Recovered Address: ", recoveredAddr.Hex())
+		fmt.Println("Original Address: ", originalAddr.Hex())
+		return false
+	}
 
 	// logrus.Info("Original Public Key: ", len(sigPublicKey))
 	// logrus.Info("Recovered Public Key: ", len(crypto.CompressPubkey(pubKey)))

@@ -8,6 +8,7 @@ import (
 
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	"github.com/libp2p/go-libp2p/core/peer"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -61,7 +62,7 @@ func (s *Service) subscribeWithBase(topic string, validator wrappedVal, handle s
 		return nil
 	}
 
-	if err := s.cfg.p2p.PubSub().RegisterTopicValidator(topic, validator); err != nil {
+	if err := s.cfg.p2p.PubSub().RegisterTopicValidator(s.wrapAndReportValidation(topic, validator)); err != nil {
 		log.WithError(err).Error("Could not register topic validator")
 		return nil
 	}
@@ -115,4 +116,27 @@ func (s *Service) subscribeWithBase(topic string, validator wrappedVal, handle s
 	go messageLoop()
 	log.WithField("topic", topic).Info("Subscribed to topic")
 	return sub
+}
+
+func (s *Service) wrapAndReportValidation(topic string, v wrappedVal) (string, pubsub.ValidatorEx) {
+	return topic, func(ctx context.Context, pid peer.ID, msg *pubsub.Message) (res pubsub.ValidationResult) {
+		b, err := v(ctx, pid, msg)
+		if b == pubsub.ValidationReject {
+			fields := logrus.Fields{
+				"topic":   topic,
+				"peer id": pid.String(),
+			}
+			log.WithError(err).WithFields(fields).Debugf("Gossip message was rejected")
+		}
+		if b == pubsub.ValidationIgnore {
+			if err != nil {
+				log.WithError(err).WithFields(logrus.Fields{
+					"topic":   topic,
+					"peer id": pid.String(),
+				}).Debugf("Gossip message was ignored")
+			}
+		}
+
+		return b
+	}
 }

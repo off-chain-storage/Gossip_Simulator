@@ -17,6 +17,6 @@ type PublicKey interface {
 
 type Signature interface {
 	Verify(pubKey *ecdsa.PublicKey, msg []byte) bool
-	Marshal() ([]byte, []byte, error)
+	Marshal() []byte
 	Proto() (proto.Message, error)
 }

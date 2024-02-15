@@ -4,47 +4,36 @@ import (
 	"crypto/ecdsa"
 	"flag-example/crypto/ecdsa/common"
 	curiepb "flag-example/proto"
-	"math/big"
 
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/proto"
 )
 
-type signature struct {
-	r, s *big.Int
-}
-
 type Signature struct {
-	sig *signature
+	sig []byte
 }
 
 func InitSignFromProto(i interface{}) (common.Signature, error) {
 	switch pb := i.(type) {
 	case *curiepb.Signature:
-		sig := &signature{
-			r: new(big.Int).SetBytes(pb.SigR),
-			s: new(big.Int).SetBytes(pb.SigS),
-		}
-		return &Signature{sig: sig}, nil
+		return &Signature{sig: pb.Sig}, nil
 	default:
 		return nil, errors.Wrapf(errors.New("unsupported signed curie block"), "unable to create block from type %T", i)
 	}
 }
 
 func (s *Signature) Verify(pubKey *ecdsa.PublicKey, msg []byte) bool {
-	logrus.Info("R: ", s.sig.r, "", "S: ", s.sig.s)
-
-	return ecdsa.Verify(pubKey, msg, s.sig.r, s.sig.s)
+	comPubKey := crypto.CompressPubkey(pubKey)
+	return crypto.VerifySignature(comPubKey, msg, s.sig)
 }
 
-func (s *Signature) Marshal() ([]byte, []byte, error) {
-	return s.sig.r.Bytes(), s.sig.s.Bytes(), nil
+func (s *Signature) Marshal() []byte {
+	return s.sig
 }
 
 func (s *Signature) Proto() (proto.Message, error) {
 	return &curiepb.Signature{
-		SigR: s.sig.r.Bytes(),
-		SigS: s.sig.s.Bytes(),
+		Sig: s.sig,
 	}, nil
 }

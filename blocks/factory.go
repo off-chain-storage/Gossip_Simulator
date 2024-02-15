@@ -27,7 +27,7 @@ func NewCurieBlock(cb *curiepb.CurieBlock, blockData []byte) (interfaces.ReadOnl
 	return initBlockFromProto(cb)
 }
 
-func BuildSignedCurieBlockForOG(blk interfaces.ReadOnlyCurieBlock, sig_r []byte, sig_s []byte) (*curiepb.SignedCurieBlockForOG, error) {
+func BuildSignedCurieBlockForOG(blk interfaces.ReadOnlyCurieBlock, sig []byte) (*curiepb.SignedCurieBlockForOG, error) {
 	pb, err := blk.Proto()
 	if err != nil {
 		return nil, err
@@ -42,20 +42,18 @@ func BuildSignedCurieBlockForOG(blk interfaces.ReadOnlyCurieBlock, sig_r []byte,
 	signedBlock := &curiepb.SignedCurieBlockForOG{
 		Body: b,
 		Signature: &curiepb.Signature{
-			SigR: sig_r,
-			SigS: sig_s,
+			Sig: sig,
 		},
 	}
 
 	return signedBlock, nil
 }
 
-func BuildSignedCurieBlockForNG(sig_r []byte, sig_s []byte) (*curiepb.SignedCurieBlockForNG, error) {
+func BuildSignedCurieBlockForNG(sig []byte) (*curiepb.SignedCurieBlockForNG, error) {
 	// Build SignedBlockData
 	signedBlock := &curiepb.SignedCurieBlockForNG{
 		Signature: &curiepb.Signature{
-			SigR: sig_r,
-			SigS: sig_s,
+			Sig: sig,
 		},
 	}
 

@@ -13,8 +13,6 @@ import (
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
-
-	"go.opencensus.io/plugin/ocgrpc"
 )
 
 type Config struct {
@@ -152,9 +150,6 @@ func ConstructDialOptions(
 			grpcretry.WithMax(grpcRetries),
 			grpcretry.WithBackoff(grpcretry.BackoffLinear(grpcRetryDelay)),
 		),
-		// 통계 핸들러??
-		grpc.WithStatsHandler(&ocgrpc.ClientHandler{}),
-
 		// gRPC Unary, Stream Interceptor Option - X
 		// gRPC Round Robin Option - X
 	}

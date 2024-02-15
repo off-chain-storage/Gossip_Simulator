@@ -2,34 +2,28 @@ package ecdsad
 
 import (
 	"crypto/ecdsa"
-	"crypto/rand"
-	curieecdsa "flag-example/crypto/ecdsa"
 	"flag-example/crypto/ecdsa/common"
 
-	"github.com/sirupsen/logrus"
+	"github.com/ethereum/go-ethereum/crypto"
 )
 
 type ecdsaPrivateKey struct {
 	p *ecdsa.PrivateKey
 }
 
-func PrivateKeyFromBytes(privKey []byte) common.PrivateKey {
-	pk := curieecdsa.ConvertToEcdsaPrivKeyByte(privKey)
-
-	wrappedKey := &ecdsaPrivateKey{p: pk}
+func PrivateKeyFromBytes(privKey *ecdsa.PrivateKey) common.PrivateKey {
+	wrappedKey := &ecdsaPrivateKey{p: privKey}
 
 	return wrappedKey
 }
 
 func (p *ecdsaPrivateKey) Sign(msg []byte) common.Signature {
-	r, s, err := ecdsa.Sign(rand.Reader, p.p, msg)
+	sig, err := crypto.Sign(msg, p.p)
 	if err != nil {
 		panic(err)
 	}
 
-	logrus.Info("R: ", r, "", "S: ", s)
-
-	return &Signature{sig: &signature{r: r, s: s}}
+	return &Signature{sig: sig}
 }
 
 func (p *ecdsaPrivateKey) PublicKey() common.PublicKey {

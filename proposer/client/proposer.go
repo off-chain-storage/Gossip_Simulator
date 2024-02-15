@@ -42,13 +42,13 @@ func (p *proposer) ProposeCurieBlockForOG(ctx context.Context, blockData []byte)
 	}
 
 	// Sign Block with Proposer's Private Key
-	sig_r, sig_s, err := p.signData(ctx, wb)
+	sig, err := p.signData(ctx, wb)
 	if err != nil {
 		log.WithError(err).Error("Failed to sign block")
 		return err
 	}
 
-	blk, err := blocks.BuildSignedCurieBlockForOG(wb, sig_r, sig_s)
+	blk, err := blocks.BuildSignedCurieBlockForOG(wb, sig)
 	if err != nil {
 		log.WithError(err).Error("Failed to build signed curie block")
 		return err
@@ -85,13 +85,13 @@ func (p *proposer) ProposeCurieBlockForNG(ctx context.Context, blockData []byte)
 	}
 
 	// Sign Block with Proposer's Private Key
-	sig_r, sig_s, err := p.signData(ctx, wb)
+	sig, err := p.signData(ctx, wb)
 	if err != nil {
 		log.WithError(err).Error("Failed to sign block")
 		return err
 	}
 
-	blk, err := blocks.BuildSignedCurieBlockForNG(sig_r, sig_s)
+	blk, err := blocks.BuildSignedCurieBlockForNG(sig)
 	if err != nil {
 		log.WithError(err).Error("Failed to build signed curie block")
 		return err
@@ -135,7 +135,7 @@ func (p *proposer) SendPubKeyToCurieNode(ctx context.Context) error {
 	return nil
 }
 
-func (p *proposer) signData(ctx context.Context, b interfaces.ReadOnlyCurieBlock) ([]byte, []byte, error) {
+func (p *proposer) signData(ctx context.Context, b interfaces.ReadOnlyCurieBlock) ([]byte, error) {
 	var pubKey string
 	pk, err := p.keyManager.FetchValidatingPublicKeys()
 	if err == nil {
@@ -148,12 +148,10 @@ func (p *proposer) signData(ctx context.Context, b interfaces.ReadOnlyCurieBlock
 	})
 	if err != nil {
 		log.WithError(err).Error("Failed to sign block")
-		return nil, nil, err
+		return nil, err
 	}
 
-	log.Info(b.Hash())
-
-	return sig.Marshal()
+	return sig.Marshal(), nil
 }
 
 func (p *proposer) WaitForKeyManagerInitialization(ctx context.Context) error {

@@ -157,7 +157,6 @@ func (c *CurieNode) startRedisDB(cliCtx *cli.Context) error {
 		return err
 	}
 
-	// conn 연결하는 코드가 있어야함
 	svc.SetRedisConn()
 
 	// 여기 좀 수정해야함;;

@@ -45,7 +45,6 @@ func (s *Service) registerSubscribers() {
 func (s *Service) subscribe(topic string, validator wrappedVal, handle subHandler) *pubsub.Subscription {
 	base := p2p.GossipTopicMappings(topic)
 	if base == nil {
-		// Impossible condition as it would mean topic does not exist.
 		panic(fmt.Sprintf("%s is not mapped to any message in GossipTopicMappings", topic))
 	}
 
@@ -55,7 +54,6 @@ func (s *Service) subscribe(topic string, validator wrappedVal, handle subHandle
 func (s *Service) subscribeWithBase(topic string, validator wrappedVal, handle subHandler) *pubsub.Subscription {
 	log := log.WithField("topic", topic)
 
-	// Do not resubscribe already seen subscriptions.
 	ok := s.subHandler.topicExists(topic)
 	if ok {
 		log.Debugf("Provided topic already has an active subscription running: %s", topic)
@@ -93,10 +91,9 @@ func (s *Service) subscribeWithBase(topic string, validator wrappedVal, handle s
 
 	messageLoop := func() {
 		for {
-			// Subscriber 쪽에서 메세지를 수신하더라도 여기 이후로 넘어가지 않음
+			// Subscriber 쪽에서 메세지를 수신하더라도 여기 이후로 넘어가지 않음 - 해결
 			msg, err := sub.Next(s.ctx)
 			if err != nil {
-				// context or subscription is cancelled.
 				if err != pubsub.ErrSubscriptionCancelled {
 					log.WithError(err).Warn("Subscription next failed")
 				}

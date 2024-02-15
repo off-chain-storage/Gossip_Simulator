@@ -3,16 +3,15 @@ package local
 import (
 	"context"
 	"crypto/ecdsa"
-	"crypto/rand"
 
 	curieecdsa "flag-example/crypto/ecdsa"
 	"flag-example/crypto/ecdsa/ecdsad"
 	curiepb "flag-example/proto"
 	"sync"
 
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/crypto/secp256k1"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -35,21 +34,19 @@ func NewKeyManager(_ context.Context) (*KeyManager, error) {
 }
 
 func (*KeyManager) GenerateKey() error {
-	privKey, err := ecdsa.GenerateKey(secp256k1.S256(), rand.Reader)
+	privKey, err := crypto.GenerateKey()
 	if err != nil {
 		return errors.Wrap(err, "failed to generate key")
 	}
+
+	privKey.PublicKey.Curve = secp256k1.S256()
+
 	pubKey := &privKey.PublicKey
-
-	logrus.Info("Key Generation, ECDSA PubKey is ", pubKey)
-	logrus.Info("Key Generation, String PubKey is ", curieecdsa.ConvertToStringEcdsaPubKey(pubKey))
-
-	logrus.Info("Key Generation, ECDSA PrivKey is ", privKey)
 
 	lock.Lock()
 	publicKey = pubKey
 	privateKeyCache[curieecdsa.ConvertToStringEcdsaPubKey(pubKey)] =
-		ecdsad.PrivateKeyFromBytes(curieecdsa.ConvertToByteEcdsaPrivKey(privKey))
+		ecdsad.PrivateKeyFromBytes(privKey)
 	lock.Unlock()
 
 	return nil
@@ -62,8 +59,6 @@ func (*KeyManager) Sign(ctx context.Context, req *curiepb.SignRequest) (curieecd
 	if !ok {
 		return nil, errors.New("secret key not found for public key")
 	}
-
-	logrus.Info("Before Signing, ECDSA PrivKey is ", privateKey)
 
 	return privateKey.Sign(req.SigningMsg), nil
 }

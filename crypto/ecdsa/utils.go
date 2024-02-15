@@ -2,7 +2,6 @@ package ecdsa
 
 import (
 	"crypto/ecdsa"
-	"crypto/elliptic"
 	"encoding/hex"
 	"log"
 	"math/big"
@@ -107,15 +106,17 @@ func ConvertToEcdsaPubKeyString(pubKeyHex string) (*ecdsa.PublicKey, error) {
 		log.Fatalf("failed to decode: %v", err)
 	}
 
+	return gcrypto.DecompressPubkey(pubKeyBytes)
+
 	// 바이트 슬라이스를 이용해 ECDSA 공개 키 재구성
-	pubKey_x, pubKey_y := secp256k1.DecompressPubkey(pubKeyBytes)
+	// pubKey_x, pubKey_y := secp256k1.DecompressPubkey(pubKeyBytes)
 
-	// *ecdsa.PublicKey 생성
-	ecdsaPubKey := ecdsa.PublicKey{
-		Curve: elliptic.P256(),
-		X:     pubKey_x,
-		Y:     pubKey_y,
-	}
+	// // *ecdsa.PublicKey 생성
+	// ecdsaPubKey := ecdsa.PublicKey{
+	// 	Curve: secp256k1.S256(),
+	// 	X:     pubKey_x,
+	// 	Y:     pubKey_y,
+	// }
 
-	return &ecdsaPubKey, nil
+	// return &ecdsaPubKey, nil
 }

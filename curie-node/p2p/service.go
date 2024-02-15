@@ -46,20 +46,6 @@ type Service struct {
 	joinedTopicsLock sync.RWMutex
 	host             host.Host
 	dht              *dht.IpfsDHT
-
-	// 단순 P2P에서 필요없는 옵션
-	// pingMethod func(ctx context.Context, id peer.ID) error
-	// dv5Listener           Listener
-	// metaData              metadata.Metadata
-	// isPreGenesis          bool
-	// addrFilter            *multiaddr.Filters
-	// ipLimiter             *leakybucket.Collector
-	// subnetsLock           map[uint64]*sync.RWMutex
-	// subnetsLockLock       sync.Mutex // Lock access to subnetsLock
-	// initializationLock    sync.Mutex
-	// genesisTime           time.Time
-	// genesisValidatorsRoot []byte
-	// activeValidatorCount  uint64
 }
 
 func NewService(ctx context.Context, cfg *Config) (*Service, error) {
@@ -72,55 +58,29 @@ func NewService(ctx context.Context, cfg *Config) (*Service, error) {
 		cancel:       cancel,
 		cfg:          cfg,
 		joinedTopics: make(map[string]*pubsub.Topic, len(gossipTopicMappings)),
-		// isPreGenesis: true,
-		// subnetsLock:  make(map[uint64]*sync.RWMutex),
 	}
-
-	// cfg 검증
 	s.cfg = validateConfig(s.cfg)
 
-	// // 부트 스트랩 노드 cfg에서 파싱 후 Service Struct에 붙이기
-	// dv5Nodes := parseBootStrapAddrs(s.cfg.BootstrapNodeAddr)
-	// cfg.Discv5BootStrapAddr = dv5Nodes
-
-	// 뭔가 내 네트워크 정보 가져오는 것 같은데 자세히는 모르겠다,,
-	ipAddr := curienetwork.IPAddr()
-
-	// private key 생성하기
+	// Generate Private Key
 	s.privKey, err = privKey(s.cfg)
 	if err != nil {
 		log.WithError(err).Error("Failed to generate p2p private key")
 		return nil, err
 	}
 
-	// // Publisher 이면 PublicKey Redis에 등록하기
-	// if s.cfg.IsPublisher {
-	// 	ecdsaPubKey, err := s.getPubKeyFromPrivKey()
-	// 	if err != nil {
-	// 		log.WithError(err).Error("Failed to get p2p Public key")
-	// 		return nil, err
-	// 	}
-	// 	if err := s.cfg.DB.SetDataToRedis("Publisher", ecdsaPubKey); err != nil {
-	// 		log.Error(err)
-	// 		return nil, err
-	// 	}
-	// }
+	ipAddr := curienetwork.IPAddr()
 
-	// libp2p options 설정
 	opts := s.buildOptions(ipAddr, s.privKey)
 	h, err := libp2p.New(opts...)
 	if err != nil {
 		log.WithError(err).Error("Failed to create p2p host")
 		return nil, err
 	}
-
-	// libp2p host
 	s.host = h
 
 	// Set pubsub option
 	// psOpts := s.pubsubOptions()
 
-	// 뭔지 몰라,,,
 	// setPubSubParameters()
 
 	// Create GossipSub Instance
@@ -136,7 +96,6 @@ func NewService(ctx context.Context, cfg *Config) (*Service, error) {
 		PeerLimit: int(s.cfg.MaxPeers),
 	})
 
-	// ** 여기다가 Proposer 노드의 Public Key 저장 또는 가져오는 함수 추가 하기 **
 	if !s.cfg.IsPublisher {
 		// Subscriber
 		pubKey, err := s.cfg.DB.GetDataFromRedis("Proposer")
@@ -146,6 +105,7 @@ func NewService(ctx context.Context, cfg *Config) (*Service, error) {
 
 		log.Info("Proposer's PubKey from RedisDB is ", pubKey)
 
+		// Convert string to *ecdsa.PublicKey (Geth-secp256k1)
 		ecdsaPubKey, err := ecdsacurie.ConvertToEcdsaPubKeyString(pubKey)
 		if err != nil {
 			log.WithError(err).Error("Failed to convert *ecdsa.Publickey from string")

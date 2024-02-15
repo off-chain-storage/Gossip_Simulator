@@ -93,7 +93,7 @@ func (s *Service) SubscribeToTopic(topic string, opts ...pubsub.SubOpt) (*pubsub
 func (s *Service) pubsubOptions() []pubsub.Option {
 	psOpts := []pubsub.Option{
 		// 메시지 서명 첨부하지 않고, 서명이 있는 메세지 거부
-		pubsub.WithMessageSignaturePolicy(pubsub.StrictNoSign),
+		// pubsub.WithMessageSignaturePolicy(pubsub.StrictNoSign),
 
 		// 메세지 Author 정보 제거 - 익명성 향상
 		pubsub.WithNoAuthor(),

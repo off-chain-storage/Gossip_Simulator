@@ -3,8 +3,8 @@ package proposer
 import (
 	"context"
 	"flag-example/blocks"
-	"flag-example/config/params"
 	ecdsacurie "flag-example/crypto/ecdsa"
+	"flag-example/crypto/ecdsa/ecdsad"
 	"flag-example/curie-node/db"
 	"flag-example/curie-node/p2p"
 	curiepb "flag-example/proto"
@@ -42,9 +42,7 @@ func (ps *Server) SendProposerPublicKey(ctx context.Context, req *curiepb.Propos
 	}
 
 	// Singleton Pattern for storing pubKey
-	params.OverrideCuriePublisherConfig(&params.ProposerConfig{
-		ProposerPubKey: ecdsaPubKey,
-	})
+	ecdsad.PublicKeyFromProposer(ecdsaPubKey)
 
 	// Return Propose Response to Proposer Node
 	return &curiepb.ProposeResponse{

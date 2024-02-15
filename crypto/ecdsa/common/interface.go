@@ -9,7 +9,9 @@ type PrivateKey interface {
 	Sign(msg []byte) Signature
 }
 
-type PublicKey interface{}
+type PublicKey interface {
+	Copy() PublicKey
+}
 
 type Signature interface {
 	Verify(pubKey PublicKey, msg []byte) bool

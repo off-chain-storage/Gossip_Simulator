@@ -2,18 +2,17 @@ package sync
 
 import (
 	"context"
-	"crypto/ecdsa"
-	"flag-example/config/params"
+	"flag-example/crypto/ecdsa/common"
+	"flag-example/crypto/ecdsa/ecdsad"
 	"flag-example/curie-node/db"
 	"flag-example/curie-node/monitor"
 	"flag-example/curie-node/p2p"
 )
 
 type config struct {
-	p2p           p2p.P2P
-	curieDB       db.ReadOnlyRedisDB
-	monitor       monitor.Monitor
-	receiveModule BlockReceiver
+	p2p     p2p.P2P
+	curieDB db.ReadOnlyRedisDB
+	monitor monitor.Monitor
 }
 
 type Service struct {
@@ -22,7 +21,7 @@ type Service struct {
 	cancel              context.CancelFunc
 	subHandler          *subTopicHandler
 	initialSyncComplete chan struct{}
-	pubKey              *ecdsa.PublicKey
+	pubKey              common.PublicKey
 }
 
 func NewService(ctx context.Context, opts ...Option) *Service {
@@ -73,6 +72,5 @@ func (s *Service) registerHandlers() {
 }
 
 func (s *Service) getPubKey() {
-	pubKey := params.CurieProposerConfig()
-	s.pubKey = pubKey.ProposerPubKey
+	s.pubKey = ecdsad.GetPublicKey().Copy()
 }

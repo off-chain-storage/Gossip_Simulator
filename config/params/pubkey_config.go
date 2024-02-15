@@ -1,13 +1,13 @@
 package params
 
 import (
-	"crypto/ecdsa"
+	"flag-example/crypto/ecdsa/common"
 
 	"github.com/mohae/deepcopy"
 )
 
 type ProposerConfig struct {
-	ProposerPubKey *ecdsa.PublicKey
+	ProposerPubKey *common.PublicKey
 }
 
 var proposerConfig ProposerConfig

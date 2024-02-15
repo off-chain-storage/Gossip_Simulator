@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"flag-example/config/params"
 	ecdsacurie "flag-example/crypto/ecdsa"
+	"flag-example/crypto/ecdsa/ecdsad"
 	"flag-example/curie-node/p2p/cnode"
 	"flag-example/curie-node/p2p/peers"
 	curienetwork "flag-example/network"
@@ -30,7 +30,7 @@ import (
 
 // maxDialTimeout은 단일 피어 다이얼에 대한 시간 초과입니다.
 // var maxDialTimeout = params.BeaconConfig().RespTimeoutDuration()
-const maxDialTimeout = time.Duration(10) * time.Second
+const maxDialTimeout = time.Duration(30) * time.Second
 
 // Service for managing peer to peer (p2p) networking.
 type Service struct {
@@ -161,10 +161,8 @@ func (s *Service) Start() {
 			log.WithError(err).Error("Failed to convert *ecdsa.Publickey from string")
 		}
 
-		// 퍼블릭 키 싱글턴으로 유지하기
-		params.OverrideCuriePublisherConfig(&params.ProposerConfig{
-			ProposerPubKey: ecdsaPubKey,
-		})
+		// Singleton Pattern for storing pubKey
+		ecdsad.PublicKeyFromProposer(ecdsaPubKey)
 	}
 
 	// Peer Discovery를 위한 DHT Init 함수 실행
@@ -191,13 +189,16 @@ func (s *Service) connectWithAllPeers(multiAddrs []multiaddr.Multiaddr) {
 		return
 	}
 
+	var wg sync.WaitGroup
 	for _, info := range addrInfos {
+		wg.Add(1)
 		go func(info peer.AddrInfo) {
 			if err := s.connectWithPeer(s.ctx, info); err != nil {
 				log.WithError(err).Tracef("Could not connect with peer %s", info.String())
 			}
 		}(info)
 	}
+	wg.Wait()
 }
 
 func (s *Service) connectWithPeer(ctx context.Context, info peer.AddrInfo) error {

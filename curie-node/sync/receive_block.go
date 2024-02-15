@@ -16,18 +16,12 @@ type BlockReceiver interface {
 func (s *Service) ReceiveOGBlock(ctx context.Context, block interfaces.SignedCurieBlock) error {
 	/* Check Received Data for Validation */
 
-	logrus.Info("@@ STEP_2_1 @@")
-
 	// Hashing Received Data
 	hash := block.Hash()
-
-	logrus.Info("@@ STEP_2_2 @@")
 
 	// Decryption Signature && Compare Hashing and Decryption Signature
 	// 1. 수신 데이터로부터 서명 데이터 추출하기
 	sig := block.Signature()
-
-	logrus.Info("@@ STEP_2_3 @@")
 
 	// 2. 공개키 이용하여 Verify() 함수 호출하기
 	if sig.Verify(s.pubKey, hash) {

@@ -37,11 +37,11 @@ func (s *Service) startDHT() error {
 			s.startupErr = err
 			return err
 		}
-
-		// Connection with New Peer - Go Routine
-		go s.listenForNewNodes(OriginalTopicFormat)
-		go s.listenForNewNodes(NewApproachTopicFormat)
 	}
+
+	// Connection with New Peer - Go Routine
+	go s.listenForNewNodes(OriginalTopicFormat)
+	go s.listenForNewNodes(NewApproachTopicFormat)
 
 	if err = kdht.Bootstrap(s.ctx); err != nil {
 		return err

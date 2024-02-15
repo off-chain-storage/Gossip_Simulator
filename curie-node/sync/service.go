@@ -72,5 +72,5 @@ func (s *Service) registerHandlers() {
 }
 
 func (s *Service) getPubKey() {
-	s.pubKey = ecdsad.GetPublicKey().Copy()
+	s.pubKey = ecdsad.GetPublicKey()
 }

@@ -17,10 +17,10 @@ func (s *Service) originalCurieBlockSubscriber(ctx context.Context, msg proto.Me
 		return err
 	}
 
-	// log.Info("@@ STEP_3 @@")
 	if err := s.cfg.monitor.SendUDPMessage(s.cfg.p2p.PeerID().String()); err != nil {
 		return err
 	}
+	log.Info("@@ COMPLETE @@")
 
 	return nil
 }

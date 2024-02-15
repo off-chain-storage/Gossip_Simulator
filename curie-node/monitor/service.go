@@ -41,6 +41,8 @@ func (s *Service) Start() {
 		s.SetUDPConn()
 	}
 
+	log.Info("Start UDP listener")
+
 	close(s.cfg.InitialSyncComplete)
 }
 

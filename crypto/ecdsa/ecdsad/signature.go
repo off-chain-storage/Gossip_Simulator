@@ -1,7 +1,6 @@
 package ecdsad
 
 import (
-	"bytes"
 	"crypto/ecdsa"
 	"flag-example/crypto/ecdsa/common"
 	curiepb "flag-example/proto"
@@ -26,29 +25,38 @@ func InitSignFromProto(i interface{}) (common.Signature, error) {
 }
 
 func (s *Signature) Verify(pubKey *ecdsa.PublicKey, msg []byte) bool {
-	sigPublicKey, err := crypto.Ecrecover(msg, s.sig)
-	if err != nil {
-		logrus.WithError(err).Error("Failed to recover public key")
-		return false
-	}
 
-	logrus.Info("Original Public Key: ", len(sigPublicKey))
-	logrus.Info("Recovered Public Key: ", len(crypto.CompressPubkey(pubKey)))
-	k, err := crypto.DecompressPubkey(sigPublicKey)
-	if err != nil {
-		logrus.WithError(err).Error("Failed to decompress public key")
-		return false
-	}
-
-	if bytes.Equal(crypto.CompressPubkey(k), crypto.CompressPubkey(pubKey)) {
+	if crypto.VerifySignature(crypto.CompressPubkey(pubKey), msg, s.sig) {
 		return true
 	} else {
 		logrus.Info("Original Public Key: ", crypto.CompressPubkey(pubKey))
-		logrus.Info("Recovered Public Key: ", crypto.CompressPubkey(k))
-		logrus.Info(bytes.Equal(crypto.CompressPubkey(k), crypto.CompressPubkey(pubKey)))
 		logrus.Info("Signature: ", s.sig)
 		return false
 	}
+
+	// sigPublicKey, err := crypto.Ecrecover(msg, s.sig)
+	// if err != nil {
+	// 	logrus.WithError(err).Error("Failed to recover public key")
+	// 	return false
+	// }
+
+	// logrus.Info("Original Public Key: ", len(sigPublicKey))
+	// logrus.Info("Recovered Public Key: ", len(crypto.CompressPubkey(pubKey)))
+	// k, err := crypto.DecompressPubkey(sigPublicKey)
+	// if err != nil {
+	// 	logrus.WithError(err).Error("Failed to decompress public key")
+	// 	return false
+	// }
+
+	// if bytes.Equal(crypto.CompressPubkey(k), crypto.CompressPubkey(pubKey)) {
+	// 	return true
+	// } else {
+	// 	logrus.Info("Original Public Key: ", crypto.CompressPubkey(pubKey))
+	// 	logrus.Info("Recovered Public Key: ", crypto.CompressPubkey(k))
+	// 	logrus.Info(bytes.Equal(crypto.CompressPubkey(k), crypto.CompressPubkey(pubKey)))
+	// 	logrus.Info("Signature: ", s.sig)
+	// 	return false
+	// }
 
 	// if (sigPublicKey != nil) && bytes.Equal(crypto.CompressPubkey(pubKey), sigPublicKey) {
 	// 	return true

@@ -79,12 +79,12 @@ func NewService(ctx context.Context, cfg *Config) (*Service, error) {
 	s.host = h
 
 	// Set pubsub option
-	// psOpts := s.pubsubOptions()
+	psOpts := s.pubsubOptions()
 
 	// setPubSubParameters()
 
 	// Create GossipSub Instance
-	gs, err := pubsub.NewGossipSub(s.ctx, s.host)
+	gs, err := pubsub.NewGossipSub(s.ctx, s.host, psOpts...)
 	if err != nil {
 		log.WithError(err).Error("Failed to start pubsub")
 		return nil, err

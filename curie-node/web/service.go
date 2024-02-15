@@ -48,7 +48,7 @@ func (s *Service) Start() {
 
 	// Start the Web Server
 	go func() {
-		s.router.Listen(address)
+		s.cfg.Router.Listen(address)
 	}()
 
 	log.WithField("address", address).Info("http listening on address")

@@ -38,6 +38,9 @@ func NewService(ctx context.Context, opts ...Option) *Service {
 		}
 	}
 
+	// Get Proposer's Public Key
+	r.getPubKey()
+
 	r.subHandler = newSubTopicHandler()
 
 	return r
@@ -46,9 +49,6 @@ func NewService(ctx context.Context, opts ...Option) *Service {
 // Start the regular sync service
 func (s *Service) Start() {
 	log.Info("Start Sync Service")
-
-	// Get Proposer's Public Key
-	s.getPubKey()
 
 	go s.registerHandlers()
 }
@@ -72,5 +72,8 @@ func (s *Service) registerHandlers() {
 }
 
 func (s *Service) getPubKey() {
-	s.pubKey = ecdsad.GetPublicKey().Copy()
+
+	log.Info(ecdsad.GetPublicKey())
+
+	// s.pubKey = ecdsad.GetPublicKey().Copy()
 }

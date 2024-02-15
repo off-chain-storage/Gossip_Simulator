@@ -7,6 +7,7 @@ import (
 	"math/big"
 
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -32,6 +33,8 @@ func InitSignFromProto(i interface{}) (common.Signature, error) {
 }
 
 func (s *Signature) Verify(pubKey *ecdsa.PublicKey, msg []byte) bool {
+	logrus.Info("R: ", s.sig.r, "", "S: ", s.sig.s)
+
 	return ecdsa.Verify(pubKey, msg, s.sig.r, s.sig.s)
 }
 

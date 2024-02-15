@@ -5,6 +5,8 @@ import (
 	"crypto/rand"
 	curieecdsa "flag-example/crypto/ecdsa"
 	"flag-example/crypto/ecdsa/common"
+
+	"github.com/sirupsen/logrus"
 )
 
 type ecdsaPrivateKey struct {
@@ -24,6 +26,9 @@ func (p *ecdsaPrivateKey) Sign(msg []byte) common.Signature {
 	if err != nil {
 		panic(err)
 	}
+
+	logrus.Info("R: ", r, "", "S: ", s)
+
 	return &Signature{sig: &signature{r: r, s: s}}
 }
 

@@ -32,13 +32,14 @@ func (s *Signature) Verify(pubKey *ecdsa.PublicKey, msg []byte) bool {
 		return false
 	}
 
+	logrus.Info("Original Public Key: ", len(sigPublicKey))
 	k, err := crypto.DecompressPubkey(sigPublicKey)
 	if err != nil {
 		logrus.WithError(err).Error("Failed to decompress public key")
 		return false
 	}
 
-	if (sigPublicKey != nil) && bytes.Equal(crypto.CompressPubkey(k), crypto.CompressPubkey(pubKey)) {
+	if bytes.Equal(crypto.CompressPubkey(k), crypto.CompressPubkey(pubKey)) {
 		return true
 	} else {
 		logrus.Info("Original Public Key: ", crypto.CompressPubkey(pubKey))

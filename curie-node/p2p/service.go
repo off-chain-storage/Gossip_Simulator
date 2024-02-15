@@ -136,16 +136,6 @@ func NewService(ctx context.Context, cfg *Config) (*Service, error) {
 		PeerLimit: int(s.cfg.MaxPeers),
 	})
 
-	return s, nil
-}
-
-func (s *Service) Start() {
-	// 피어가 이미 시작됐는지 확인
-	if s.started {
-		log.Error("Attempted to start p2p service when it was already started")
-		return
-	}
-
 	// ** 여기다가 Proposer 노드의 Public Key 저장 또는 가져오는 함수 추가 하기 **
 	if !s.cfg.IsPublisher {
 		// Subscriber
@@ -163,6 +153,16 @@ func (s *Service) Start() {
 
 		// Singleton Pattern for storing pubKey
 		ecdsad.PublicKeyFromProposer(ecdsaPubKey)
+	}
+
+	return s, nil
+}
+
+func (s *Service) Start() {
+	// 피어가 이미 시작됐는지 확인
+	if s.started {
+		log.Error("Attempted to start p2p service when it was already started")
+		return
 	}
 
 	// Peer Discovery를 위한 DHT Init 함수 실행

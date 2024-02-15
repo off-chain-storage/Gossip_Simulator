@@ -38,11 +38,6 @@ func NewService(ctx context.Context, opts ...Option) *Service {
 		}
 	}
 
-	// Get Proposer's Public Key
-	if !r.cfg.p2p.PublisherPeer() {
-		r.getPubKey()
-	}
-
 	r.subHandler = newSubTopicHandler()
 
 	return r
@@ -64,6 +59,10 @@ func (s *Service) Stop() error {
 func (s *Service) registerHandlers() {
 	select {
 	case <-s.initialSyncComplete:
+		// Get Proposer's Public Key
+		if !s.cfg.p2p.PublisherPeer() {
+			s.getPubKey()
+		}
 		// Register respective pubsub handlers at state synced event.
 		s.registerSubscribers()
 		return

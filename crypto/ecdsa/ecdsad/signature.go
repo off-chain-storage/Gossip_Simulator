@@ -35,6 +35,10 @@ func (s *Signature) Verify(pubKey *ecdsa.PublicKey, msg []byte) bool {
 	if (sigPublicKey != nil) && bytes.Equal(crypto.CompressPubkey(pubKey), sigPublicKey) {
 		return true
 	} else {
+		logrus.Info("Original Public Key: ", crypto.CompressPubkey(pubKey))
+		logrus.Info("Recovered Public Key: ", sigPublicKey)
+		logrus.Info(bytes.Equal(crypto.CompressPubkey(pubKey), sigPublicKey))
+		logrus.Info("Signature: ", s.sig)
 		return false
 	}
 }

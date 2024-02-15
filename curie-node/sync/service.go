@@ -2,7 +2,7 @@ package sync
 
 import (
 	"context"
-	"flag-example/crypto/ecdsa/common"
+	"crypto/ecdsa"
 	"flag-example/crypto/ecdsa/ecdsad"
 	"flag-example/curie-node/db"
 	"flag-example/curie-node/monitor"
@@ -21,7 +21,7 @@ type Service struct {
 	cancel              context.CancelFunc
 	subHandler          *subTopicHandler
 	initialSyncComplete chan struct{}
-	pubKey              common.PublicKey
+	pubKey              *ecdsa.PublicKey
 }
 
 func NewService(ctx context.Context, opts ...Option) *Service {
@@ -39,7 +39,7 @@ func NewService(ctx context.Context, opts ...Option) *Service {
 	}
 
 	// Get Proposer's Public Key
-	r.getPubKey()
+	// r.getPubKey()
 
 	r.subHandler = newSubTopicHandler()
 

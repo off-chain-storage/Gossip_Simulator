@@ -7,20 +7,18 @@ import (
 	"github.com/mohae/deepcopy"
 )
 
-var publicKey common.PublicKey
+var publicKey *PublicKey
 
 type PublicKey struct {
 	p *ecdsa.PublicKey
 }
 
-func GetPublicKey() common.PublicKey {
-	return publicKey
+func PublicKeyFromProposer(pubKey *ecdsa.PublicKey) {
+	publicKey = &PublicKey{p: pubKey}
 }
 
-func PublicKeyFromProposer(pubKey *ecdsa.PublicKey) common.PublicKey {
-	publicKey = &PublicKey{p: pubKey}
-
-	return publicKey
+func GetPublicKey() *ecdsa.PublicKey {
+	return publicKey.p
 }
 
 func (p *PublicKey) Copy() common.PublicKey {

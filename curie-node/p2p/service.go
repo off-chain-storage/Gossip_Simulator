@@ -161,8 +161,6 @@ func (s *Service) Start() {
 			log.WithError(err).Error("Failed to convert *ecdsa.Publickey from string")
 		}
 
-		log.Info(ecdsaPubKey)
-
 		// Singleton Pattern for storing pubKey
 		ecdsad.PublicKeyFromProposer(ecdsaPubKey)
 	}

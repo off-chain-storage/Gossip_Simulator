@@ -31,8 +31,8 @@ func InitSignFromProto(i interface{}) (common.Signature, error) {
 	}
 }
 
-func (s *Signature) Verify(pubKey common.PublicKey, msg []byte) bool {
-	return ecdsa.Verify(pubKey.(*PublicKey).p, msg, s.sig.r, s.sig.s)
+func (s *Signature) Verify(pubKey *ecdsa.PublicKey, msg []byte) bool {
+	return ecdsa.Verify(pubKey, msg, s.sig.r, s.sig.s)
 }
 
 func (s *Signature) Marshal() ([]byte, []byte, error) {

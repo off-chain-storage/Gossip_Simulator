@@ -1,6 +1,8 @@
 package common
 
 import (
+	"crypto/ecdsa"
+
 	"google.golang.org/protobuf/proto"
 )
 
@@ -14,7 +16,7 @@ type PublicKey interface {
 }
 
 type Signature interface {
-	Verify(pubKey PublicKey, msg []byte) bool
+	Verify(pubKey *ecdsa.PublicKey, msg []byte) bool
 	Marshal() ([]byte, []byte, error)
 	Proto() (proto.Message, error)
 }

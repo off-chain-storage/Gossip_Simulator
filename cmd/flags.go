@@ -300,7 +300,7 @@ var (
 		Value: 8080,
 	}
 	// MonitorUDPPortFlag는 Monitor UDP Port를 지정
-	MonitorUDPAddrFlag = &cli.UintFlag{
+	MonitorUDPAddrFlag = &cli.StringFlag{
 		Name:  "monitor-udp-addr",
 		Usage: "Monitor UDP Address",
 	}

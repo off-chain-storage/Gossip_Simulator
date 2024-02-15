@@ -3,6 +3,7 @@ package rpc
 import (
 	"context"
 	"flag-example/curie-node/db"
+	"flag-example/curie-node/monitor"
 	"flag-example/curie-node/p2p"
 	"flag-example/curie-node/rpc/proposer"
 	curiepb "flag-example/proto"
@@ -23,6 +24,7 @@ type Config struct {
 	MaxMsgSize   int
 	Broadcaster  p2p.Broadcaster
 	PeersFetcher p2p.PeersProvider
+	Monitor      monitor.Monitor
 	DB           db.AccessRedisDB
 }
 
@@ -78,9 +80,10 @@ func NewService(ctx context.Context, cfg *Config) *Service {
 
 func (s *Service) Start() {
 	proposerServer := &proposer.Server{
-		Ctx: s.ctx,
-		DB:  s.cfg.DB,
-		P2P: s.cfg.Broadcaster,
+		Ctx:     s.ctx,
+		DB:      s.cfg.DB,
+		P2P:     s.cfg.Broadcaster,
+		Monitor: s.cfg.Monitor,
 	}
 
 	curiepb.RegisterCurieNodeProposerServer(s.grpcServer, proposerServer)

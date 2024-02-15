@@ -215,6 +215,7 @@ func (c *CurieNode) registerRPCService(router *fiber.App) error {
 		Port:        c.cliCtx.String(flags.RPCPort.Name),
 		MaxMsgSize:  c.cliCtx.Int(cmd.GrpcMaxCallRecvMsgSizeFlag.Name),
 		Broadcaster: c.fetchP2P(),
+		Monitor:     c.fetchMonitor(),
 		DB:          c.db,
 	})
 

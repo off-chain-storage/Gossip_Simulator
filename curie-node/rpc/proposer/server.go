@@ -6,6 +6,7 @@ import (
 	ecdsacurie "flag-example/crypto/ecdsa"
 	"flag-example/crypto/ecdsa/ecdsad"
 	"flag-example/curie-node/db"
+	"flag-example/curie-node/monitor"
 	"flag-example/curie-node/p2p"
 	curiepb "flag-example/proto"
 
@@ -18,9 +19,10 @@ import (
 )
 
 type Server struct {
-	Ctx context.Context
-	DB  db.AccessRedisDB
-	P2P p2p.Broadcaster
+	Ctx     context.Context
+	DB      db.AccessRedisDB
+	P2P     p2p.Broadcaster
+	Monitor monitor.Monitor
 }
 
 func (ps *Server) SendProposerPublicKey(ctx context.Context, req *curiepb.ProposerPublicKeyRequest) (*curiepb.ProposeResponse, error) {
@@ -64,6 +66,10 @@ func (ps *Server) GetBlock(ctx context.Context, empty *empty.Empty) (*curiepb.Cu
 
 func (ps *Server) ProposeCurieBlockForOG(ctx context.Context, req *curiepb.SignedCurieBlockForOG) (*curiepb.ProposeResponse, error) {
 	log.Info("Received Original Gossip Request from Proposer Node")
+
+	if err := ps.Monitor.SendUDPMessage("Start Propagation"); err != nil {
+		return nil, err
+	}
 
 	blk, err := blocks.NewSignedBlock(req)
 	if err != nil {

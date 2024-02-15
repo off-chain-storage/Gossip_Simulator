@@ -86,14 +86,12 @@ func (s *Service) subscribeWithBase(topic string, validator wrappedVal, handle s
 			return
 		}
 
-		log.Info("Message handled")
+		log.Info("@@ COMPLETE @@")
 	}
 
 	messageLoop := func() {
 		for {
-			log.Info("HI 1")
 			// Subscriber 쪽에서 메세지를 수신하더라도 여기 이후로 넘어가지 않음 - 해결
-			log.Info("Subscriber is waiting for message...")
 			msg, err := sub.Next(s.ctx)
 			if err != nil {
 				if err != pubsub.ErrSubscriptionCancelled {
@@ -103,14 +101,12 @@ func (s *Service) subscribeWithBase(topic string, validator wrappedVal, handle s
 				return
 			}
 
-			log.Info("@@ This msg is from ", msg.ReceivedFrom.String(), "@@")
-
 			if msg.ReceivedFrom == s.cfg.p2p.PeerID() {
 				continue
 			}
 
+			log.Info("@@ This msg is from ", msg.ReceivedFrom.String(), "@@")
 			go pipeline(msg)
-			log.Info("HI 2")
 		}
 	}
 

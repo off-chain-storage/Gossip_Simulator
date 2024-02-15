@@ -61,16 +61,16 @@ func New(cliCtx *cli.Context, cancel context.CancelFunc) (*CurieNode, error) {
 		return nil, err
 	}
 
+	// Register Monitor Service for ACK
+	log.Debugln("Registering Monitor Service")
+	if err := curie.registerMonitoringService(curie.initialSyncComplete); err != nil {
+		return nil, err
+	}
+
 	// Register RPC Service for Connection with Validator Node
 	log.Debugln("Registering RPC Service")
 	router := newRouter(cliCtx)
 	if err := curie.registerRPCService(router); err != nil {
-		return nil, err
-	}
-
-	// Register Monitor Service for ACK
-	log.Debugln("Registering Monitor Service")
-	if err := curie.registerMonitoringService(curie.initialSyncComplete); err != nil {
 		return nil, err
 	}
 

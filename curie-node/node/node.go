@@ -65,11 +65,11 @@ func New(cliCtx *cli.Context, cancel context.CancelFunc) (*CurieNode, error) {
 	}
 
 	// Register Web Service for Storing Public Key
-	// log.Debugln("Registering Web Service")
-	// router := newRouter(cliCtx)
-	// if err := curie.registerWebService(router); err != nil {
-	// 	return nil, err
-	// }
+	log.Debugln("Registering Web Service")
+	router := newRouter(cliCtx)
+	if err := curie.registerWebService(router); err != nil {
+		return nil, err
+	}
 
 	// Register Monitor Service for ACK
 	log.Debugln("Registering Monitor Service")

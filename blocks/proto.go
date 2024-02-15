@@ -7,6 +7,7 @@ import (
 	curiepb "flag-example/proto"
 
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -90,6 +91,9 @@ func (sbn *SignedCurieBlockForNG) Signature() common.Signature {
 }
 
 func initBlockFromProto(pb *curiepb.CurieBlock) (*CurieBlock, error) {
+
+	logrus.Info("Data", len(pb.DummyData))
+
 	blk := &CurieBlock{
 		dummyData: pb.DummyData,
 	}

@@ -39,7 +39,7 @@ func NewService(ctx context.Context, opts ...Option) *Service {
 	}
 
 	// Get Proposer's Public Key
-	// r.getPubKey()
+	r.getPubKey()
 
 	r.subHandler = newSubTopicHandler()
 

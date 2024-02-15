@@ -5,6 +5,8 @@ import "net"
 func (s *Service) buildUDPAddr() error {
 	cfg := s.cfg
 
+	log.Info("UDPAddr: ", cfg.UDPAddr)
+
 	udpServer, err := net.ResolveUDPAddr("udp4", cfg.UDPAddr)
 	if err != nil {
 		log.WithError(err).Error("Failed to resolve UDP address")

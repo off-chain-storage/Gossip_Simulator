@@ -36,6 +36,11 @@ func NewService(ctx context.Context, cfg *Config) *Service {
 		router: cfg.Router,
 	}
 
+	// Register Proposer Web Server's Router
+	if err := server.InitializeRoutes(); err != nil {
+		log.WithError(err).Fatal("Could not initialize routes")
+	}
+
 	return server
 }
 

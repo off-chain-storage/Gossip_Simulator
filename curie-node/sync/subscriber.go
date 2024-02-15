@@ -12,6 +12,8 @@ import (
 
 const pubsubMessageTimeout = 30 * time.Second
 
+// type wrappedVal func(context.Context, peer.ID, *pubsub.Message) (pubsub.ValidationResult, error)
+
 type subHandler func(context.Context, proto.Message) error
 
 func (s *Service) registerSubscribers() {
@@ -56,7 +58,13 @@ func (s *Service) subscribeWithBase(topic string, handle subHandler) *pubsub.Sub
 		ctx, cancel := context.WithTimeout(s.ctx, pubsubMessageTimeout)
 		defer cancel()
 
-		if err := handle(ctx, msg.ValidatorData.(proto.Message)); err != nil {
+		var message proto.Message
+		if err := proto.Unmarshal(msg.Data, message); err != nil {
+			log.WithError(err).Error("Failed to unmarshal pubsub message")
+			return
+		}
+
+		if err := handle(ctx, message); err != nil {
 			log.WithError(err).Error("Could not handle message")
 			return
 		}

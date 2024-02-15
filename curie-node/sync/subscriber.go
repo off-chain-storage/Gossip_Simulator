@@ -7,37 +7,51 @@ import (
 	"time"
 
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
+	"github.com/libp2p/go-libp2p/core/peer"
 	"google.golang.org/protobuf/proto"
 )
 
 const pubsubMessageTimeout = 30 * time.Second
 
-// type wrappedVal func(context.Context, peer.ID, *pubsub.Message) (pubsub.ValidationResult, error)
+type wrappedVal func(context.Context, peer.ID, *pubsub.Message) (pubsub.ValidationResult, error)
 
 type subHandler func(context.Context, proto.Message) error
+
+func (s *Service) msgValidator(_ context.Context, _ peer.ID, msg *pubsub.Message) (pubsub.ValidationResult, error) {
+	m, err := s.decodePubsubMessage(msg)
+	if err != nil {
+		log.WithError(err).Error("Could not decode message")
+		return pubsub.ValidationReject, nil
+	}
+	msg.ValidatorData = m
+
+	return pubsub.ValidationAccept, nil
+}
 
 func (s *Service) registerSubscribers() {
 	s.subscribe(
 		p2p.OriginalTopicFormat,
+		s.msgValidator,
 		s.originalCurieBlockSubscriber,
 	)
 	s.subscribe(
 		p2p.NewApproachTopicFormat,
+		s.msgValidator,
 		s.newCurieBlockSubscriber,
 	)
 }
 
-func (s *Service) subscribe(topic string, handle subHandler) *pubsub.Subscription {
+func (s *Service) subscribe(topic string, validator wrappedVal, handle subHandler) *pubsub.Subscription {
 	base := p2p.GossipTopicMappings(topic)
 	if base == nil {
 		// Impossible condition as it would mean topic does not exist.
 		panic(fmt.Sprintf("%s is not mapped to any message in GossipTopicMappings", topic))
 	}
 
-	return s.subscribeWithBase(topic, handle)
+	return s.subscribeWithBase(topic, validator, handle)
 }
 
-func (s *Service) subscribeWithBase(topic string, handle subHandler) *pubsub.Subscription {
+func (s *Service) subscribeWithBase(topic string, validator wrappedVal, handle subHandler) *pubsub.Subscription {
 	log := log.WithField("topic", topic)
 
 	// Do not resubscribe already seen subscriptions.
@@ -58,14 +72,10 @@ func (s *Service) subscribeWithBase(topic string, handle subHandler) *pubsub.Sub
 		ctx, cancel := context.WithTimeout(s.ctx, pubsubMessageTimeout)
 		defer cancel()
 
-		var message proto.Message
-		log.Info(msg.Data)
-		if err := proto.Unmarshal(msg.Data, message); err != nil {
-			log.WithError(err).Error("Failed to unmarshal pubsub message")
-			return
-		}
+		log.Info("msg is received")
 
-		if err := handle(ctx, message); err != nil {
+		// 여기에 msg Decoding 추가해야 함
+		if err := handle(ctx, msg.ValidatorData.(proto.Message)); err != nil {
 			log.WithError(err).Error("Could not handle message")
 			return
 		}
@@ -75,7 +85,6 @@ func (s *Service) subscribeWithBase(topic string, handle subHandler) *pubsub.Sub
 		for {
 			// Subscriber 쪽에서 메세지를 수신하더라도 여기 이후로 넘어가지 않음
 			msg, err := sub.Next(s.ctx)
-			log.Info("msg is received")
 			if err != nil {
 				// context or subscription is cancelled.
 				if err != pubsub.ErrSubscriptionCancelled {

@@ -222,7 +222,7 @@ func (c *CurieNode) registerRPCService(router *fiber.App) error {
 }
 
 func (c *CurieNode) registerMonitoringService(complete chan struct{}) error {
-	udpAddr := c.cliCtx.String(cmd.MonitorUDPPortFlag.Name)
+	udpAddr := c.cliCtx.String(cmd.MonitorUDPAddrFlag.Name)
 
 	ms, err := monitor.NewService(c.ctx, &monitor.Config{
 		UDPAddr:             udpAddr,

@@ -16,7 +16,6 @@ func (s *Service) ReceiveOGBlock(ctx context.Context, block interfaces.SignedCur
 	/* Check Received Data for Validation */
 	// Hashing Received Data
 	hash := block.Hash()
-	log.Info(hash)
 
 	// Decryption Signature && Compare Hashing and Decryption Signature
 	sig := block.Signature()

@@ -304,6 +304,16 @@ var (
 		Name:  "monitor-udp-addr",
 		Usage: "Monitor UDP Address",
 	}
+	// HTTPHost는 Web Server Host를 지정
+	HTTPHost = &cli.StringFlag{
+		Name:  "http-server-host",
+		Usage: "The host on which the HTTP server runs on",
+	}
+	// HTTPPort는 Web Server Port를 지정
+	HTTPPort = &cli.IntFlag{
+		Name:  "http-server-port",
+		Usage: "Enable HTTP Server for JSON requests",
+	}
 )
 
 // LoadFlagsFromConfig sets flags values from config file if ConfigFileFlag is set.

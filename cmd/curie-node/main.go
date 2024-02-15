@@ -50,6 +50,10 @@ var appFlags = []cli.Flag{
 	// Monitor Flag
 	cmd.MonitorUDPAddrFlag,
 
+	// HTTP Flag
+	cmd.HTTPPort,
+	cmd.HTTPHost,
+
 	// 필요 없는 것
 	// cmd.BackupWebhookOutputDir,
 	// cmd.MinimalConfigFlag,

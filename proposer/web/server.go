@@ -76,7 +76,6 @@ func (s *Server) InitializeRoutes() error {
 
 	// Register all routes api
 	api := s.router.Group("/curie/proposer")
-	api.Get("/test", s.Test)
 	api.Post("/original", s.ProposeCurieBlockForOG)
 	api.Post("/new", s.ProposeCurieBlockForNG)
 

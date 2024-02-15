@@ -10,6 +10,9 @@ import (
 	"flag-example/curie-node/p2p"
 	"flag-example/curie-node/rpc"
 	regularsync "flag-example/curie-node/sync"
+	c_web "flag-example/curie-node/web"
+	"fmt"
+
 	"flag-example/runtime"
 	"os"
 	"os/signal"
@@ -61,6 +64,13 @@ func New(cliCtx *cli.Context, cancel context.CancelFunc) (*CurieNode, error) {
 		return nil, err
 	}
 
+	// Register Web Service for Storing Public Key
+	log.Debugln("Registering Web Service")
+	router := newRouter(cliCtx)
+	if err := curie.registerWebService(router); err != nil {
+		return nil, err
+	}
+
 	// Register Monitor Service for ACK
 	log.Debugln("Registering Monitor Service")
 	if err := curie.registerMonitoringService(curie.initialSyncComplete); err != nil {
@@ -69,8 +79,7 @@ func New(cliCtx *cli.Context, cancel context.CancelFunc) (*CurieNode, error) {
 
 	// Register RPC Service for Connection with Validator Node
 	log.Debugln("Registering RPC Service")
-	router := newRouter(cliCtx)
-	if err := curie.registerRPCService(router); err != nil {
+	if err := curie.registerRPCService(); err != nil {
 		return nil, err
 	}
 
@@ -85,9 +94,6 @@ func New(cliCtx *cli.Context, cancel context.CancelFunc) (*CurieNode, error) {
 
 func newRouter(cliCtx *cli.Context) *fiber.App {
 	r := fiber.New()
-
-	// r.Use(server.NormalizeQueryValuesHandler)
-	// router.RegisterRoutes(cliCtx)
 	return r
 }
 
@@ -195,6 +201,21 @@ func (c *CurieNode) registerP2P(cliCtx *cli.Context) error {
 	return c.services.RegisterService(svc)
 }
 
+func (c *CurieNode) registerWebService(router *fiber.App) error {
+	// Register Proposer Web Server's Router
+	httpHost := c.cliCtx.String(cmd.HTTPHost.Name)
+	httpPort := c.cliCtx.Int(cmd.HTTPPort.Name)
+
+	webServer := c_web.NewService(c.ctx, &c_web.Config{
+		Host:   httpHost,
+		Port:   fmt.Sprintf("%d", httpPort),
+		Router: router,
+		DB:     c.db,
+	})
+
+	return c.services.RegisterService(webServer)
+}
+
 func (c *CurieNode) registerSyncService(initialSyncComplete chan struct{}) error {
 	rs := regularsync.NewService(
 		c.ctx,
@@ -209,7 +230,7 @@ func (c *CurieNode) registerSyncService(initialSyncComplete chan struct{}) error
 	return c.services.RegisterService(rs)
 }
 
-func (c *CurieNode) registerRPCService(router *fiber.App) error {
+func (c *CurieNode) registerRPCService() error {
 	rpcService := rpc.NewService(c.ctx, &rpc.Config{
 		Host:        c.cliCtx.String(flags.RPCHost.Name),
 		Port:        c.cliCtx.String(flags.RPCPort.Name),

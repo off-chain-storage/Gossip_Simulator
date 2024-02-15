@@ -33,6 +33,7 @@ func (s *Signature) Verify(pubKey *ecdsa.PublicKey, msg []byte) bool {
 	}
 
 	logrus.Info("Original Public Key: ", len(sigPublicKey))
+	logrus.Info("Recovered Public Key: ", len(crypto.CompressPubkey(pubKey)))
 	k, err := crypto.DecompressPubkey(sigPublicKey)
 	if err != nil {
 		logrus.WithError(err).Error("Failed to decompress public key")

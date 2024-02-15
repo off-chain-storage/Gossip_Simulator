@@ -91,6 +91,7 @@ func (s *Service) subscribeWithBase(topic string, validator wrappedVal, handle s
 
 	messageLoop := func() {
 		for {
+			log.Info("HI 1")
 			// Subscriber 쪽에서 메세지를 수신하더라도 여기 이후로 넘어가지 않음 - 해결
 			log.Info("Subscriber is waiting for message...")
 			msg, err := sub.Next(s.ctx)
@@ -109,6 +110,7 @@ func (s *Service) subscribeWithBase(topic string, validator wrappedVal, handle s
 			}
 
 			go pipeline(msg)
+			log.Info("HI 2")
 		}
 	}
 

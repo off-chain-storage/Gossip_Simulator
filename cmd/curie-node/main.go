@@ -47,6 +47,9 @@ var appFlags = []cli.Flag{
 	flags.RPCHost,
 	flags.RPCPort,
 
+	// Monitor Flag
+	cmd.MonitorUDPAddrFlag,
+
 	// 필요 없는 것
 	// cmd.BackupWebhookOutputDir,
 	// cmd.MinimalConfigFlag,

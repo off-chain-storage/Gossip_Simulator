@@ -151,6 +151,8 @@ func (p *proposer) signData(ctx context.Context, b interfaces.ReadOnlyCurieBlock
 		return nil, nil, err
 	}
 
+	log.Info(b.Hash())
+
 	return sig.Marshal()
 }
 

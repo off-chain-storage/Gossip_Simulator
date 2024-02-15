@@ -25,15 +25,13 @@ type Service struct {
 	router *fiber.App
 }
 
-func NewService(ctx context.Context, cfg *Config) *Service {
+func NewService(ctx context.Context, cfg *Config) (*Service, error) {
 	ctx, cancel := context.WithCancel(ctx)
 
 	server := &Service{
 		ctx:    ctx,
 		cancel: cancel,
-		host:   cfg.Host,
-		port:   cfg.Port,
-		router: cfg.Router,
+		cfg:    cfg,
 	}
 
 	// Register Proposer Web Server's Router
@@ -41,7 +39,7 @@ func NewService(ctx context.Context, cfg *Config) *Service {
 		log.WithError(err).Fatal("Could not initialize routes")
 	}
 
-	return server
+	return server, nil
 }
 
 func (s *Service) Start() {

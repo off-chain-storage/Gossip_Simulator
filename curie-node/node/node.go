@@ -193,7 +193,6 @@ func (c *CurieNode) registerP2P(cliCtx *cli.Context) error {
 		UDPPort:           cliCtx.Uint(cmd.P2PUDPPort.Name),
 		MaxPeers:          cliCtx.Uint(cmd.P2PMaxPeers.Name),
 		DB:                c.db,
-		// LocalIP:           cliCtx.String(cmd.P2PIP.Name),
 	})
 	if err != nil {
 		return err
@@ -206,12 +205,15 @@ func (c *CurieNode) registerWebService(router *fiber.App) error {
 	httpHost := c.cliCtx.String(cmd.HTTPHost.Name)
 	httpPort := c.cliCtx.Int(cmd.HTTPPort.Name)
 
-	webServer := c_web.NewService(c.ctx, &c_web.Config{
+	webServer, err := c_web.NewService(c.ctx, &c_web.Config{
 		Host:   httpHost,
 		Port:   fmt.Sprintf("%d", httpPort),
 		Router: router,
 		DB:     c.db,
 	})
+	if err != nil {
+		return err
+	}
 
 	return c.services.RegisterService(webServer)
 }

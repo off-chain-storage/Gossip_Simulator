@@ -96,7 +96,7 @@ func (s *Service) pubsubOptions() []pubsub.Option {
 		// pubsub.WithMessageSignaturePolicy(pubsub.StrictNoSign),
 
 		// 메세지 Author 정보 제거 - 익명성 향상
-		pubsub.WithNoAuthor(),
+		// pubsub.WithNoAuthor(),
 
 		// 메세지 ID 함수 설정
 		// pubsub.WithMessageIdFn(func(pmsg *pubsubpb.Message) string {

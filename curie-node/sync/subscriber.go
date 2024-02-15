@@ -104,6 +104,8 @@ func (s *Service) subscribeWithBase(topic string, validator wrappedVal, handle s
 				return
 			}
 
+			log.Info("@@ This msg is from ", msg.ReceivedFrom.String(), "@@")
+
 			if msg.ReceivedFrom == s.cfg.p2p.PeerID() {
 				continue
 			}

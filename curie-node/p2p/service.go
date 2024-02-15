@@ -256,3 +256,7 @@ func (s *Service) PubSub() *pubsub.PubSub {
 func (s *Service) PeerID() peer.ID {
 	return s.host.ID()
 }
+
+func (s *Service) PublisherPeer() bool {
+	return s.cfg.IsPublisher
+}

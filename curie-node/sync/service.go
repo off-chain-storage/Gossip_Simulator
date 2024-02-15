@@ -39,7 +39,9 @@ func NewService(ctx context.Context, opts ...Option) *Service {
 	}
 
 	// Get Proposer's Public Key
-	r.getPubKey()
+	if !r.cfg.p2p.PublisherPeer() {
+		r.getPubKey()
+	}
 
 	r.subHandler = newSubTopicHandler()
 

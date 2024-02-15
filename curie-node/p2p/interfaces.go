@@ -61,6 +61,7 @@ type Sender interface {
 // PeersProvider abstracts obtaining our current list of known peers status.
 type PeersProvider interface {
 	Peers() *peers.Status
+	PublisherPeer() bool
 }
 
 type PeerManager interface {

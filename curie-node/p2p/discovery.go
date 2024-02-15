@@ -57,7 +57,7 @@ func (s *Service) listenForNewNodes(topic string) {
 
 	dutil.Advertise(s.ctx, routingDiscovery, topic)
 
-	ticker := time.NewTicker(time.Second * 2)
+	ticker := time.NewTicker(time.Millisecond * 500)
 	defer ticker.Stop()
 
 	for {

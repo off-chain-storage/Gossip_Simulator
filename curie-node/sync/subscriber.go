@@ -85,6 +85,8 @@ func (s *Service) subscribeWithBase(topic string, validator wrappedVal, handle s
 			log.WithError(err).Error("Could not handle message")
 			return
 		}
+
+		log.Info("Message handled")
 	}
 
 	messageLoop := func() {

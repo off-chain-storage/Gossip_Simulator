@@ -59,6 +59,7 @@ func (s *Service) subscribeWithBase(topic string, handle subHandler) *pubsub.Sub
 		defer cancel()
 
 		var message proto.Message
+		log.Info(msg.Data)
 		if err := proto.Unmarshal(msg.Data, message); err != nil {
 			log.WithError(err).Error("Failed to unmarshal pubsub message")
 			return

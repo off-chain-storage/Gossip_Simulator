@@ -85,13 +85,30 @@ func (p *proposer) ProposeCurieBlockForNG(ctx context.Context, blockData []byte)
 	}
 
 	// Sign Block with Proposer's Private Key
-	sig, err := p.signData(ctx, wb)
+	// sig, err := p.signData(ctx, wb)
+	// if err != nil {
+	// 	log.WithError(err).Error("Failed to sign block")
+	// 	return err
+	// }
+
+	/* */
+	var pubKey string
+	pk, err := p.keyManager.FetchValidatingPublicKeys()
+	if err == nil {
+		pubKey = curieecdsa.ConvertToStringEcdsaPubKey(pk)
+	}
+
+	sig, err := p.keyManager.Sign(ctx, &curiepb.SignRequest{
+		PublicKey:  pubKey,
+		SigningMsg: hash.Hash(wb.Body()),
+	})
 	if err != nil {
 		log.WithError(err).Error("Failed to sign block")
 		return err
 	}
+	/* */
 
-	blk, err := blocks.BuildSignedCurieBlockForNG(sig)
+	blk, err := blocks.BuildSignedCurieBlockForNG(sig.Marshal())
 	if err != nil {
 		log.WithError(err).Error("Failed to build signed curie block")
 		return err
@@ -144,7 +161,7 @@ func (p *proposer) signData(ctx context.Context, b interfaces.ReadOnlyCurieBlock
 
 	sig, err := p.keyManager.Sign(ctx, &curiepb.SignRequest{
 		PublicKey:  pubKey,
-		SigningMsg: b.Hash(),
+		SigningMsg: b.Body(),
 	})
 	if err != nil {
 		log.WithError(err).Error("Failed to sign block")

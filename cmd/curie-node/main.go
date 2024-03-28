@@ -30,6 +30,7 @@ var appFlags = []cli.Flag{
 	cmd.NoDiscovery,
 	cmd.P2PUDPPort,
 	cmd.P2PTCPPort,
+
 	// cmd.P2PIP,
 	cmd.P2PHost,
 	cmd.P2PHostDNS,

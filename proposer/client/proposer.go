@@ -161,7 +161,7 @@ func (p *proposer) signData(ctx context.Context, b interfaces.ReadOnlyCurieBlock
 
 	sig, err := p.keyManager.Sign(ctx, &curiepb.SignRequest{
 		PublicKey:  pubKey,
-		SigningMsg: b.Body(),
+		SigningMsg: b.Hash(),
 	})
 	if err != nil {
 		log.WithError(err).Error("Failed to sign block")

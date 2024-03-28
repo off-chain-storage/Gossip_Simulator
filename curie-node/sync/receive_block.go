@@ -46,6 +46,10 @@ func (s *Service) ReceiveNGBlock(ctx context.Context, block interfaces.SignedCur
 				return errors.New("Failed to read message")
 			}
 
+			size := len(msg)
+			KB := float64(size) / 1024.0
+			log.Info(KB)
+
 			hash := hash.Hash(msg)
 
 			if sig.Verify(s.pubKey, hash) {

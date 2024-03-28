@@ -190,7 +190,10 @@ func (s *Service) connectWithPeer(ctx context.Context, info peer.AddrInfo) error
 func (s *Service) connectToBootnodes() error {
 	nodes := make([]*cnode.Node, 0, len(s.cfg.BootstrapNodeAddr))
 
-	log.Info(len(s.cfg.BootstrapNodeAddr))
+	log.Info(s.cfg.BootstrapNodeAddr[0])
+	log.Info(s.cfg.BootstrapNodeAddr[1])
+	log.Info(s.cfg.BootstrapNodeAddr[2])
+
 	for _, peerAddr := range s.cfg.BootstrapNodeAddr {
 		bootNode, err := cnode.Parse(peerAddr)
 		if err != nil {

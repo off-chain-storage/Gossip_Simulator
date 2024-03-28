@@ -14,16 +14,17 @@ message Signature {
     bytes sig= 1;
 }
 
-// 원본 블록 가십 데이터
-// 1. 서명된 블록 데이터 Gossip
-// 2. 원본 블록의 Hash Value Gossip
+/* Original Gossip Data */
+// 1. Signed Hashing Data
+// 2. Original Block Data
 message SignedCurieBlockForOG {
     CurieBlock body = 1;
     Signature signature = 2;
 }
 
-// 새로운 가십을 위한 암호화된 Hash Value
-// 1. 암호화된 블록 Hash Value
+/* New Gossip Data */
+// 1. Signed Hashing Data
 message SignedCurieBlockForNG {
     Signature signature = 1;
 }
+

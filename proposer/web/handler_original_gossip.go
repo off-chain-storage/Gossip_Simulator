@@ -7,7 +7,6 @@ import (
 )
 
 func (s *Server) ProposeCurieBlockForOG(c fiber.Ctx) error {
-
 	if s.proposerService == nil {
 		// http HandleError
 	}

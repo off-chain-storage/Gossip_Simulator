@@ -71,7 +71,7 @@ func (s *Service) PublishToTopic(ctx context.Context, topic string, data []byte,
 		// ctx.Done()이 호출되면 에러를 반환
 		case <-ctx.Done():
 			return errors.Wrapf(ctx.Err(), "unable to find requisite number of peers for topic %s, 0 peers found to publish to", topic)
-		// 100ms 동안 대기
+		// 100ms 동안 대기 - 여기 주의
 		default:
 			time.Sleep(100 * time.Millisecond)
 		}

@@ -20,6 +20,7 @@ import (
 	"syscall"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/off-chain-storage/GoSphere/sdk"
 	"github.com/urfave/cli/v2"
 )
 
@@ -102,6 +103,9 @@ func (c *CurieNode) Start() {
 	c.lock.Lock()
 
 	log.Info("Starting cuire node")
+
+	// Setup Propagation Module
+	go sdk.SetupPropagationModule()
 
 	c.services.StartAll()
 

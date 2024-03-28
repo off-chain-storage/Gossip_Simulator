@@ -4,10 +4,10 @@ import (
 	file_util "flag-example/io/file"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/off-chain-storage/GoSphere/sdk"
 )
 
 func (s *Server) ProposeCurieBlockForNG(c fiber.Ctx) error {
-
 	if s.proposerService == nil {
 		// http HandleError
 	}
@@ -26,6 +26,9 @@ func (s *Server) ProposeCurieBlockForNG(c fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+
+	// Send BlockData to Propagation Node
+	go sdk.WriteMessage(rawBlkData)
 
 	if err := s.curieNodeProposer.ProposeCurieBlockForNG(c.Context(), rawBlkData); err != nil {
 		log.WithError(err).Error("Failed to propose block to curie node by New Gossip")

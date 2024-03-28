@@ -14,6 +14,7 @@ import (
 	"syscall"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/off-chain-storage/GoSphere/sdk"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
@@ -131,6 +132,9 @@ func (c *ProposerClient) registerWebService(router *fiber.App) error {
 func (c *ProposerClient) Start() {
 	c.lock.Lock()
 	log.Info("Starting Proposer Node")
+
+	// Setup Propagation Module
+	go sdk.SetupPropagationModule()
 
 	c.services.StartAll()
 

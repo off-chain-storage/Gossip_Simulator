@@ -75,10 +75,10 @@ func (p *proposer) ProposeCurieBlockForNG(ctx context.Context, blockData []byte)
 	}
 
 	// Make Hash from Block Data
-	h := hash.Hash(blockData)
+	// h := hash.Hash(blockData)
 
 	// Get CurieBlock with Block Data - Data Hash
-	wb, err := blocks.NewCurieBlock(b, h)
+	wb, err := blocks.NewCurieBlock(b, blockData)
 	if err != nil {
 		log.WithError(err).Error("Failed to wrap block")
 		return err

@@ -37,18 +37,18 @@ func (s *Service) ReceiveNGBlock(ctx context.Context, block interfaces.SignedCur
 	// Decryption Signature && Compare Hashing and Decryption Signature
 	sig := block.Signature()
 
-	msgChan := sdk.ReadMessage(ctx)
+	msgReceiverChan := sdk.ReadMessage(ctx)
 
 	for {
 		select {
-		case msg, ok := <-msgChan:
+		case msg, ok := <-msgReceiverChan:
 			if !ok {
 				return errors.New("Failed to read message")
 			}
 
 			size := len(msg)
 			KB := float64(size) / 1024.0
-			log.Info(KB)
+			log.Info(KB, "KB")
 
 			hash := hash.Hash(msg)
 

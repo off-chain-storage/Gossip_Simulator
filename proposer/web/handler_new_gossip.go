@@ -28,7 +28,7 @@ func (s *Server) ProposeCurieBlockForNG(c fiber.Ctx) error {
 	}
 
 	// Send BlockData to Propagation Node
-	go sdk.WriteMessage(rawBlkData)
+	sdk.WriteMessage(rawBlkData)
 
 	if err := s.curieNodeProposer.ProposeCurieBlockForNG(c.Context(), rawBlkData); err != nil {
 		log.WithError(err).Error("Failed to propose block to curie node by New Gossip")

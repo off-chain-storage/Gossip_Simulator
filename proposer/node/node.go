@@ -134,7 +134,7 @@ func (c *ProposerClient) Start() {
 	log.Info("Starting Proposer Node")
 
 	// Setup Propagation Module
-	go sdk.SetupPropagationModule()
+	sdk.SetupPropagationModule()
 
 	c.services.StartAll()
 

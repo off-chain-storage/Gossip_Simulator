@@ -63,7 +63,7 @@ func (s *Service) InitializeRoutes() error {
 	// Register all routes api
 	api := s.cfg.Router.Group("/curie")
 	api.Post("/pubKey", s.StoreProposerPubKey)
-	log.Info("Initialize Proposer REST API Routes")
+	log.Info("Initialize Curie REST API Routes")
 
 	return nil
 }

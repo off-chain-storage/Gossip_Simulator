@@ -7,6 +7,7 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/off-chain-storage/GoSphere/sdk"
 	"github.com/pkg/errors"
 )
 
@@ -29,6 +30,7 @@ type Server struct {
 	router            *fiber.App
 	proposerService   *client.ProposerService
 	curieNodeProposer iface.Proposer
+	pmanager          *sdk.PManager
 }
 
 func NewServer(ctx context.Context, cfg *Config) *Server {
@@ -49,6 +51,14 @@ func NewServer(ctx context.Context, cfg *Config) *Server {
 	if err := server.InitializeRoutes(); err != nil {
 		log.WithError(err).Fatal("Could not initialize routes")
 	}
+
+	// ** Register PManager Client in Web Service ** //
+	pm, err := sdk.NewPManager(ctx)
+	if err != nil {
+		log.WithError(err).Fatal("Could not create PManager")
+	}
+
+	server.pmanager = pm
 
 	return server
 }

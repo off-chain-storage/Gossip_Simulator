@@ -120,7 +120,7 @@ func (p *proposer) ProposeCurieBlockForNG(ctx context.Context, blockData []byte)
 		return err
 	}
 
-	log.Info("Successfully proposed original gossip data")
+	log.Info("Successfully proposed new gossip data")
 
 	return nil
 }

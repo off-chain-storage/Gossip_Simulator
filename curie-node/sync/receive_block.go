@@ -5,7 +5,6 @@ import (
 	"flag-example/blocks/interfaces"
 	"flag-example/crypto/hash"
 
-	"github.com/off-chain-storage/GoSphere/sdk"
 	"github.com/pkg/errors"
 )
 
@@ -24,12 +23,11 @@ func (s *Service) ReceiveOGBlock(ctx context.Context, block interfaces.SignedCur
 
 	if sig.Verify(s.pubKey, hash) {
 		log.Info("Received Data is Valid")
+		return nil
 	} else {
 		log.Error("Received Data is Non-Valid")
 		return errors.New("Received Data is Non-Valid")
 	}
-
-	return nil
 }
 
 func (s *Service) ReceiveNGBlock(ctx context.Context, block interfaces.SignedCurieBlock) error {
@@ -37,31 +35,20 @@ func (s *Service) ReceiveNGBlock(ctx context.Context, block interfaces.SignedCur
 	// Decryption Signature && Compare Hashing and Decryption Signature
 	sig := block.Signature()
 
-	msgReceiverChan := sdk.ReadMessage(ctx)
-
 	for {
-		select {
-		case msg, ok := <-msgReceiverChan:
-			if !ok {
-				return errors.New("Failed to read message")
-			}
+		msg, err := s.pmSub.ReadMessage(context.TODO())
+		if err != nil {
+			s.pmSub.Cancel()
+			return errors.New("Failed to read message")
+		}
+		hash := hash.Hash(msg.Data)
 
-			size := len(msg)
-			KB := float64(size) / 1024.0
-			log.Info(KB, "KB")
-
-			hash := hash.Hash(msg)
-
-			if sig.Verify(s.pubKey, hash) {
-				log.Info("Received Data is Valid")
-				return nil
-			} else {
-				log.Error("Received Data is Non-Valid")
-				return errors.New("Received Data is Non-Valid")
-			}
-
-		case <-ctx.Done():
+		if sig.Verify(s.pubKey, hash) {
+			log.Info("Received Data is Valid")
 			return nil
+		} else {
+			log.Error("Received Data is Non-Valid")
+			return errors.New("Received Data is Non-Valid")
 		}
 	}
 }

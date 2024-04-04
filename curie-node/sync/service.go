@@ -7,6 +7,8 @@ import (
 	"flag-example/curie-node/db"
 	"flag-example/curie-node/monitor"
 	"flag-example/curie-node/p2p"
+
+	"github.com/off-chain-storage/GoSphere/sdk"
 )
 
 type config struct {
@@ -22,6 +24,8 @@ type Service struct {
 	subHandler          *subTopicHandler
 	initialSyncComplete chan struct{}
 	pubKey              *ecdsa.PublicKey
+	pmanager            *sdk.PManager
+	pmSub               *sdk.Subscription
 }
 
 func NewService(ctx context.Context, opts ...Option) *Service {
@@ -39,6 +43,20 @@ func NewService(ctx context.Context, opts ...Option) *Service {
 	}
 
 	r.subHandler = newSubTopicHandler()
+
+	pm, err := sdk.NewPManager(ctx)
+	if err != nil {
+		log.WithError(err).Fatal("Could not create PManager")
+	}
+
+	r.pmanager = pm
+
+	sub, err := r.pmanager.Subscribe()
+	if err != nil {
+		log.Fatalf("failed to subscribe: %v", err)
+	}
+
+	r.pmSub = sub
 
 	return r
 }

@@ -5,6 +5,7 @@ import (
 	"flag-example/proposer/client"
 	"flag-example/proposer/client/iface"
 	"fmt"
+	"net"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/off-chain-storage/GoSphere/sdk"
@@ -31,6 +32,10 @@ type Server struct {
 	proposerService   *client.ProposerService
 	curieNodeProposer iface.Proposer
 	pmanager          *sdk.PManager
+
+	// UDP Server - temp service
+	udpServer *net.UDPAddr
+	conn      *net.UDPConn
 }
 
 func NewServer(ctx context.Context, cfg *Config) *Server {
@@ -60,7 +65,44 @@ func NewServer(ctx context.Context, cfg *Config) *Server {
 
 	server.pmanager = pm
 
+	// UDP Server - temp service
+	if err := server.buildUDPAddr(); err != nil {
+		log.WithError(err).Fatal("Could not build UDP address")
+	}
+
+	if err := server.Conn(); err != nil {
+		log.WithError(err).Fatal("Could not start UDP listener")
+	}
+
 	return server
+}
+
+func (s *Server) buildUDPAddr() error {
+	udpServer, err := net.ResolveUDPAddr("udp4", "43.200.145.206:30004")
+	if err != nil {
+		return err
+	}
+
+	s.udpServer = udpServer
+	return nil
+}
+
+func (s *Server) Conn() error {
+	conn, err := net.DialUDP("udp4", nil, s.udpServer)
+	if err != nil {
+		return err
+	}
+	s.conn = conn
+	return nil
+}
+
+func (s *Server) SendUDPMessage(msg string) error {
+	_, err := s.conn.Write([]byte(msg + "\n"))
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *Server) Start() {

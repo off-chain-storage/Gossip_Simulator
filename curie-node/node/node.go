@@ -47,6 +47,7 @@ func New(cliCtx *cli.Context, cancel context.CancelFunc) (*CurieNode, error) {
 		cliCtx:   cliCtx,
 		ctx:      ctx,
 		cancel:   cancel,
+		stop:     make(chan struct{}),
 		services: registry,
 	}
 

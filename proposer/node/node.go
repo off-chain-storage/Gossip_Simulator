@@ -46,7 +46,7 @@ func NewProposerClient(cliCtx *cli.Context) (*ProposerClient, error) {
 		stop:     make(chan struct{}),
 	}
 
-	router := newRouter(cliCtx)
+	router := newRouter()
 	if err := proposerClient.initialize(cliCtx, router); err != nil {
 		return nil, err
 	}
@@ -54,8 +54,12 @@ func NewProposerClient(cliCtx *cli.Context) (*ProposerClient, error) {
 	return proposerClient, nil
 }
 
-func newRouter(cliCtx *cli.Context) *fiber.App {
-	r := fiber.New()
+func newRouter() *fiber.App {
+	r := fiber.New(
+		fiber.Config{
+			BodyLimit: 20 * 1024 * 1024,
+		},
+	)
 	return r
 }
 

@@ -20,7 +20,7 @@ func (s *Service) startDHT() error {
 
 	// NoDiscovery가 True일 경우 부트스트랩 모드
 	if s.cfg.NoDiscovery {
-		options = append(options, dht.Mode(dht.ModeAutoServer))
+		options = append(options, dht.Mode(dht.ModeServer))
 	}
 
 	kdht, err := dht.New(s.ctx, s.host, options...)
@@ -28,10 +28,15 @@ func (s *Service) startDHT() error {
 		return err
 	}
 
+	s.dht = kdht
+	if err = s.dht.Bootstrap(s.ctx); err != nil {
+		return err
+	}
+
 	// NoDiscovery cmd가 false이면 진입 -> 즉, 부트스트랩과 연결될거라는 뜻
 	if !s.cfg.NoDiscovery {
 		// BootStrap Node와의 연결
-		err = s.connectToBootnodes()
+		err := s.connectToBootnodes()
 		if err != nil {
 			log.WithError(err).Error("Could not add bootnode to the exclusion list")
 			s.startupErr = err
@@ -43,12 +48,6 @@ func (s *Service) startDHT() error {
 	go s.listenForNewNodes(OriginalTopicFormat)
 	go s.listenForNewNodes(NewApproachTopicFormat)
 
-	if err = kdht.Bootstrap(s.ctx); err != nil {
-		return err
-	}
-
-	s.dht = kdht
-
 	return nil
 }
 
@@ -57,7 +56,7 @@ func (s *Service) listenForNewNodes(topic string) {
 
 	dutil.Advertise(s.ctx, routingDiscovery, topic)
 
-	ticker := time.NewTicker(time.Millisecond * 500)
+	ticker := time.NewTicker(time.Millisecond * 100)
 	defer ticker.Stop()
 
 	for {

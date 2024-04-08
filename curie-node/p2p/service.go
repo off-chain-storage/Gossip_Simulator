@@ -156,6 +156,7 @@ func (s *Service) connectWithAllPeers(multiAddrs []multiaddr.Multiaddr) {
 			if err := s.connectWithPeer(s.ctx, info); err != nil {
 				log.WithError(err).Tracef("Could not connect with peer %s", info.String())
 			}
+			wg.Done()
 		}(info)
 	}
 	wg.Wait()
@@ -182,9 +183,8 @@ func (s *Service) connectWithPeer(ctx context.Context, info peer.AddrInfo) error
 		return err
 	} else {
 		log.Infof("Connection established with node: [%q] [%q]", info.Addrs, info.ID.String())
+		return nil
 	}
-
-	return nil
 }
 
 func (s *Service) connectToBootnodes() error {

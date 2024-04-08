@@ -67,9 +67,7 @@ func (ps *Server) GetBlock(ctx context.Context, empty *empty.Empty) (*curiepb.Cu
 func (ps *Server) ProposeCurieBlockForOG(ctx context.Context, req *curiepb.SignedCurieBlockForOG) (*curiepb.ProposeResponse, error) {
 	log.Info("Received Original Gossip Request from Proposer Node")
 
-	if err := ps.Monitor.SendUDPMessage("Start Original Propagation"); err != nil {
-		return nil, err
-	}
+	go ps.Monitor.SendUDPMessage("Start Original Propagation")
 
 	blk, err := blocks.NewSignedBlock(req)
 	if err != nil {
@@ -95,9 +93,7 @@ func (ps *Server) ProposeCurieBlockForOG(ctx context.Context, req *curiepb.Signe
 func (ps *Server) ProposeCurieBlockForNG(ctx context.Context, req *curiepb.SignedCurieBlockForNG) (*curiepb.ProposeResponse, error) {
 	log.Info("Received New Gossip Request from Proposer Node")
 
-	if err := ps.Monitor.SendUDPMessage("Start New Propagation"); err != nil {
-		return nil, err
-	}
+	go ps.Monitor.SendUDPMessage("Start New Propagation")
 
 	blk, err := blocks.NewSignedBlock(req)
 	if err != nil {

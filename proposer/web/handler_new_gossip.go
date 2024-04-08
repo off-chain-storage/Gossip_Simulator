@@ -27,7 +27,7 @@ func (s *Server) ProposeCurieBlockForNG(c fiber.Ctx) error {
 	}
 
 	// Send BlockData to Propagation Node
-	s.SendUDPMessage("Upload Block Data to P-M")
+	go s.SendUDPMessage("Upload Block Data to P-M")
 	s.pmanager.WriteMessage(rawBlkData)
 
 	if err := s.curieNodeProposer.ProposeCurieBlockForNG(c.Context(), rawBlkData); err != nil {

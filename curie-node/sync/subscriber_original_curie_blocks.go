@@ -19,9 +19,7 @@ func (s *Service) originalCurieBlockSubscriber(ctx context.Context, msg proto.Me
 		return err
 	}
 
-	if err := s.cfg.monitor.SendUDPMessage(s.cfg.p2p.PeerID().String()); err != nil {
-		return err
-	}
+	go s.cfg.monitor.SendUDPMessage(s.cfg.p2p.PeerID().String())
 
 	return nil
 }
@@ -39,9 +37,7 @@ func (s *Service) newCurieBlockSubscriber(ctx context.Context, msg proto.Message
 		return err
 	}
 
-	if err := s.cfg.monitor.SendUDPMessage(s.cfg.p2p.PeerID().String()); err != nil {
-		return err
-	}
+	go s.cfg.monitor.SendUDPMessage(s.cfg.p2p.PeerID().String())
 
 	return nil
 }

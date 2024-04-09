@@ -10,6 +10,7 @@ import (
 	"flag-example/crypto/ecdsa/ecdsad"
 	"flag-example/curie-node/p2p/cnode"
 	"flag-example/curie-node/p2p/peers"
+	"flag-example/curie-node/p2p/peers/scores"
 	curienetwork "flag-example/network"
 
 	"github.com/libp2p/go-libp2p"
@@ -19,6 +20,7 @@ import (
 	"github.com/libp2p/go-libp2p/core/network"
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/multiformats/go-multiaddr"
+	"github.com/pkg/errors"
 	"go.opencensus.io/trace"
 )
 
@@ -26,7 +28,7 @@ import (
 // var pollingPeriod = 6 * time.Second
 
 // maxBadResponses는 통신을 중단하기 전에 피어로부터의 잘못된 응답의 최대 수입니다.
-// const maxBadResponses = 5
+const maxBadResponses = 5
 
 // maxDialTimeout은 단일 피어 다이얼에 대한 시간 초과입니다.
 // var maxDialTimeout = params.BeaconConfig().RespTimeoutDuration()
@@ -94,6 +96,12 @@ func NewService(ctx context.Context, cfg *Config) (*Service, error) {
 	// Peer를 위한 새로운 Status Entity 생성
 	s.peers = peers.NewStatus(ctx, &peers.StatusConfig{
 		PeerLimit: int(s.cfg.MaxPeers),
+		ScoresParams: &scores.Config{
+			BadResponsesScorerConfig: &scores.BadResponsesScorerConfig{
+				Threshold:     maxBadResponses,
+				DecayInterval: time.Hour,
+			},
+		},
 	})
 
 	if !s.cfg.IsPublisher {
@@ -169,17 +177,18 @@ func (s *Service) connectWithPeer(ctx context.Context, info peer.AddrInfo) error
 	if info.ID == s.host.ID() {
 		return nil
 	}
-
 	// 이미 연결된 ID라면 연결 시도 X
 	if s.host.Network().Connectedness(info.ID) == network.Connected {
 		return nil
 	}
+	if s.Peers().IsBad(info.ID) {
+		return errors.New("refused to connect to bad peer")
+	}
 
 	ctx, cancel := context.WithTimeout(ctx, maxDialTimeout)
 	defer cancel()
-
 	if err := s.host.Connect(ctx, info); err != nil {
-		log.Warn(err)
+		s.Peers().Scorers().BadResponsesScorer().Increment(info.ID)
 		return err
 	} else {
 		log.Infof("Connection established with node: [%q] [%q]", info.Addrs, info.ID.String())

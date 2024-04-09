@@ -15,11 +15,10 @@ type StoreConfig struct {
 
 type Store struct {
 	sync.RWMutex
-	ctx    context.Context
-	config *StoreConfig
-	peers  map[peer.ID]*PeerData
-	// 여기서 부터 필요없는 데이터
-	// trustedPeers map[peer.ID]bool
+	ctx          context.Context
+	config       *StoreConfig
+	peers        map[peer.ID]*PeerData
+	trustedPeers map[peer.ID]bool
 }
 
 // PeerData aggregates protocol and application level info about a single peer.
@@ -27,33 +26,33 @@ type PeerData struct {
 	// Network related data.
 	Address   ma.Multiaddr
 	Direction network.Direction
-	// ConnState PeerConnectionState
-
-	// 여기서 부터는 관련 없는 데이터
-	// Network related data. - 일단 제외
-	// Enr           *enr.Record
-	// NextValidTime time.Time
-	// Chain related data. - 일단 제외
-	// MetaData                  metadata.Metadata
-	// ChainState                *ethpb.Status
-	// ChainStateLastUpdated     time.Time
-	// ChainStateValidationError error
-	// Scorers internal data. - 일단 제외
-	// BadResponses         int
-	// ProcessedBlocks      uint64
-	// BlockProviderUpdated time.Time
-	// Gossip Scoring data. - 일단 제외
-	// TopicScores      map[string]*ethpb.TopicScoreSnapshot
-	// GossipScore      float64
-	// BehaviourPenalty float64
+	// Peer Score
+	BadResponses int
 }
 
 // NewStore creates new peer data store.
 func NewStore(ctx context.Context, config *StoreConfig) *Store {
 	return &Store{
-		ctx:    ctx,
-		config: config,
-		peers:  make(map[peer.ID]*PeerData),
-		// trustedPeers: make(map[peer.ID]bool),
+		ctx:          ctx,
+		config:       config,
+		peers:        make(map[peer.ID]*PeerData),
+		trustedPeers: make(map[peer.ID]bool),
 	}
+}
+
+func (s *Store) IsTrustedPeer(p peer.ID) bool {
+	return s.trustedPeers[p]
+}
+
+func (s *Store) PeerData(pid peer.ID) (*PeerData, bool) {
+	peerData, ok := s.peers[pid]
+	return peerData, ok
+}
+
+func (s *Store) SetPeerData(pid peer.ID, data *PeerData) {
+	s.peers[pid] = data
+}
+
+func (s *Store) Peers() map[peer.ID]*PeerData {
+	return s.peers
 }

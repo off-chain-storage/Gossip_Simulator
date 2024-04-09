@@ -22,7 +22,7 @@ func (s *Service) ReceiveOGBlock(ctx context.Context, block interfaces.SignedCur
 	sig := block.Signature()
 
 	if sig.Verify(s.pubKey, hash) {
-		log.Info("Received Data is Valid")
+		// log.Info("Received Data is Valid")
 		return nil
 	} else {
 		log.Error("Received Data is Non-Valid")
@@ -44,7 +44,7 @@ func (s *Service) ReceiveNGBlock(ctx context.Context, block interfaces.SignedCur
 		hash := hash.Hash(msg.Data)
 
 		if sig.Verify(s.pubKey, hash) {
-			log.Info("Received Data is Valid")
+			// log.Info("Received Data is Valid")
 			return nil
 		} else {
 			log.Error("Received Data is Non-Valid")

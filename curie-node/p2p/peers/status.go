@@ -3,6 +3,9 @@ package peers
 import (
 	"context"
 	"flag-example/curie-node/p2p/peers/peerdata"
+	"flag-example/curie-node/p2p/peers/scores"
+
+	"github.com/libp2p/go-libp2p/core/peer"
 )
 
 // const (
@@ -36,21 +39,18 @@ const (
 
 // 피어 상태 정보
 type Status struct {
-	ctx   context.Context
-	store *peerdata.Store
-
+	ctx     context.Context
+	store   *peerdata.Store
+	scorers *scores.Service
 	// 필요없는 데이터
-	// scorers   *scorers.Service
 	// ipTracker map[string]uint64
 	// rand      *rand.Rand
 }
 
 // StatusConfig는 피어 상태 서비스 매개변수
 type StatusConfig struct {
-	// 노드에 연결 가능한 최대 동시 피어 수 지정
-	PeerLimit int
-	// 피어 평판 관련 매개 변수 - 일단 제외
-	// ScorerParams *scorers.Config
+	PeerLimit    int
+	ScoresParams *scores.Config
 }
 
 func NewStatus(ctx context.Context, config *StatusConfig) *Status {
@@ -58,12 +58,28 @@ func NewStatus(ctx context.Context, config *StatusConfig) *Status {
 		MaxPeers: maxLimitBuffer + config.PeerLimit,
 	})
 	return &Status{
-		ctx:   ctx,
-		store: store,
-
-		// 필요 없는 데이터
-		// scorers:   scorers.NewService(ctx, store, config.ScorerParams),
-		// ipTracker: map[string]uint64{},
-		// rand:  rand.NewDeterministicGenerator(),
+		ctx:     ctx,
+		store:   store,
+		scorers: scores.NewService(ctx, store, config.ScoresParams),
 	}
+}
+
+func (p *Status) Scorers() *scores.Service {
+	return p.scorers
+}
+
+func (p *Status) IsBad(pid peer.ID) bool {
+	p.store.Lock()
+	defer p.store.Unlock()
+	return p.isBad(pid)
+}
+
+// isBad is the lock-free version of IsBad.
+func (p *Status) isBad(pid peer.ID) bool {
+	// Do not disconnect from trusted peers.
+	if p.store.IsTrustedPeer(pid) {
+		return false
+	}
+	// return p.isfromBadIP(pid) || p.scorers.IsBadPeerNoLock(pid)
+	return p.scorers.IsBadPeerNoLock(pid)
 }

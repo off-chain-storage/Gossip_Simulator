@@ -13,6 +13,7 @@ const disabledFeatureFlag = "Disabled feature flag"
 
 type Flags struct {
 	DisableResourceManager bool // Disables running the node with libp2p's resource manager.
+	EnablePeerScorer       bool
 }
 
 var featureConfig *Flags

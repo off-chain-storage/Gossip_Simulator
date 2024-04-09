@@ -85,8 +85,6 @@ func (s *Service) subscribeWithBase(topic string, validator wrappedVal, handle s
 			log.WithError(err).Error("Could not handle message")
 			return
 		}
-
-		log.Info("@@ COMPLETE @@")
 	}
 
 	messageLoop := func() {
@@ -105,7 +103,7 @@ func (s *Service) subscribeWithBase(topic string, validator wrappedVal, handle s
 				continue
 			}
 
-			log.Info("@@ This msg is from ", msg.ReceivedFrom.String(), "@@")
+			log.Info("This msg is from ", msg.ReceivedFrom.String())
 			go pipeline(msg)
 		}
 	}

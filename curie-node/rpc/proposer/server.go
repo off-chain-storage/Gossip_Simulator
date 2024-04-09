@@ -9,6 +9,7 @@ import (
 	"flag-example/curie-node/monitor"
 	"flag-example/curie-node/p2p"
 	curiepb "flag-example/proto"
+	"time"
 
 	"fmt"
 
@@ -69,6 +70,11 @@ func (ps *Server) ProposeCurieBlockForOG(ctx context.Context, req *curiepb.Signe
 
 	go ps.Monitor.SendUDPMessage("Start Original Propagation")
 
+	go func() {
+		currentTime := time.Now()
+		fmt.Printf("Start Original Propagation at %s\n", currentTime)
+	}()
+
 	blk, err := blocks.NewSignedBlock(req)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Could not decode block: %v", err)
@@ -94,6 +100,11 @@ func (ps *Server) ProposeCurieBlockForNG(ctx context.Context, req *curiepb.Signe
 	log.Info("Received New Gossip Request from Proposer Node")
 
 	go ps.Monitor.SendUDPMessage("Start New Propagation")
+
+	go func() {
+		currentTime := time.Now()
+		fmt.Printf("Start New Propagation at %s\n", currentTime)
+	}()
 
 	blk, err := blocks.NewSignedBlock(req)
 	if err != nil {

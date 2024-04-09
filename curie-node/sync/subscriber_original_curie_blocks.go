@@ -3,6 +3,8 @@ package sync
 import (
 	"context"
 	"flag-example/blocks"
+	"fmt"
+	"time"
 
 	"google.golang.org/protobuf/proto"
 )
@@ -19,6 +21,10 @@ func (s *Service) originalCurieBlockSubscriber(ctx context.Context, msg proto.Me
 		return err
 	}
 
+	go func() {
+		currentTime := time.Now()
+		fmt.Printf("Finish Original Propagation at %s\n", currentTime)
+	}()
 	go s.cfg.monitor.SendUDPMessage(s.cfg.p2p.PeerID().String())
 
 	return nil
@@ -37,6 +43,10 @@ func (s *Service) newCurieBlockSubscriber(ctx context.Context, msg proto.Message
 		return err
 	}
 
+	go func() {
+		currentTime := time.Now()
+		fmt.Printf("Finish New Propagation at %s\n", currentTime)
+	}()
 	go s.cfg.monitor.SendUDPMessage(s.cfg.p2p.PeerID().String())
 
 	return nil

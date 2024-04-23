@@ -7,6 +7,7 @@ import (
 type Config struct {
 	NoDiscovery       bool
 	BootstrapNodeAddr []string
+	BootstrapNodeReg  []string
 	HostAddress       string
 	HostDNS           string
 	PrivateKey        string

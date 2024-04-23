@@ -93,7 +93,6 @@ func NewService(ctx context.Context, cfg *Config) (*Service, error) {
 	}
 	s.pubsub = gs
 
-	// Peer를 위한 새로운 Status Entity 생성
 	s.peers = peers.NewStatus(ctx, &peers.StatusConfig{
 		PeerLimit: int(s.cfg.MaxPeers),
 		ScoresParams: &scores.Config{
@@ -127,13 +126,11 @@ func NewService(ctx context.Context, cfg *Config) (*Service, error) {
 }
 
 func (s *Service) Start() {
-	// 피어가 이미 시작됐는지 확인
 	if s.started {
 		log.Error("Attempted to start p2p service when it was already started")
 		return
 	}
 
-	// Peer Discovery를 위한 DHT Init 함수 실행
 	if err := s.startDHT(); err != nil {
 		log.WithError(err).Fatal("Failed to start discovery")
 		s.startupErr = err
@@ -153,7 +150,7 @@ func (s *Service) Stop() error {
 func (s *Service) connectWithAllPeers(multiAddrs []multiaddr.Multiaddr) {
 	addrInfos, err := peer.AddrInfosFromP2pAddrs(multiAddrs...)
 	if err != nil {
-		log.WithError(err).Error("Could not convert to peer address info's from multiaddresses")
+		log.WithError(err).Error("Could not convert to peer address info's from multi addresses")
 		return
 	}
 

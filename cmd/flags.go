@@ -101,6 +101,10 @@ var (
 		Usage: "The address of bootstrap node. Beacon node will connect for peer discovery via DHT.  Multiple nodes can be passed by using the flag multiple times but not comma-separated. You can also pass YAML files containing multiple nodes.",
 		Value: cli.NewStringSlice(params.CurieNetworkConfig().BootstrapNodes...),
 	}
+	BootstrapNodeRegion = &cli.StringSliceFlag{
+		Name:  "bootstrap-node-region",
+		Usage: "The region of the bootstrap node. This is used to filter the list of bootstrap nodes to connect to.",
+	}
 	// RelayNode tells the beacon node which relay node to connect to.
 	RelayNode = &cli.StringFlag{
 		Name: "relay-node",

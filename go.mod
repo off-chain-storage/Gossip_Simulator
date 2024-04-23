@@ -15,7 +15,7 @@ require (
 	github.com/libp2p/go-libp2p-pubsub v0.10.0
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826
 	github.com/multiformats/go-multiaddr v0.12.1
-	github.com/off-chain-storage/GoSphere v0.0.0-20240404175315-323159b16e9e
+	github.com/off-chain-storage/GoSphere v0.0.0-00010101000000-000000000000
 	github.com/pkg/errors v0.9.1
 	github.com/prysmaticlabs/fastssz v0.0.0-20221107182844-78142813af44
 	github.com/redis/go-redis/v9 v9.5.1
@@ -163,3 +163,5 @@ require (
 )
 
 replace github.com/libp2p/go-libp2p-pubsub => ../../Library/go-libp2p-pubsub-local
+
+replace github.com/off-chain-storage/GoSphere => ../GoSphere

@@ -21,6 +21,10 @@ func (s *Service) startDHT() error {
 	// NoDiscovery가 True일 경우 부트스트랩 모드
 	if s.cfg.NoDiscovery {
 		options = append(options, dht.Mode(dht.ModeServer))
+
+		for i, reg := range s.cfg.BootstrapNodeReg {
+			s.cfg.DB.SetDataToRedis(reg, s.cfg.BootstrapNodeAddr[i]+"@"+s.PeerID().String())
+		}
 	}
 
 	kdht, err := dht.New(s.ctx, s.host, options...)
@@ -35,9 +39,18 @@ func (s *Service) startDHT() error {
 
 	// NoDiscovery cmd가 false이면 진입 -> 즉, 부트스트랩과 연결될거라는 뜻
 	if !s.cfg.NoDiscovery {
-		// BootStrap Node와의 연결
-		err := s.connectToBootnodes()
-		if err != nil {
+		for _, reg := range s.cfg.BootstrapNodeReg {
+			bootAddr, err := s.cfg.DB.GetDataFromRedis(reg)
+			if err != nil {
+				log.WithError(err).Error("Could not get bootnode from redis")
+				return err
+			}
+			s.cfg.BootstrapNodeAddr = append(s.cfg.BootstrapNodeAddr, bootAddr)
+
+			log.Info(bootAddr)
+		}
+
+		if err := s.connectToBootnodes(); err != nil {
 			log.WithError(err).Error("Could not add bootnode to the exclusion list")
 			s.startupErr = err
 			return err

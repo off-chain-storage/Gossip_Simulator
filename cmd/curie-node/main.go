@@ -27,6 +27,7 @@ var appFlags = []cli.Flag{
 
 	// P2P Flag
 	cmd.BootstrapNode,
+	cmd.BootstrapNodeRegion,
 	cmd.NoDiscovery,
 	cmd.P2PUDPPort,
 	cmd.P2PTCPPort,

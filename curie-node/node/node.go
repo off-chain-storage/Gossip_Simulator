@@ -185,6 +185,7 @@ func (c *CurieNode) registerP2P(cliCtx *cli.Context) error {
 	svc, err := p2p.NewService(c.ctx, &p2p.Config{
 		BootstrapNodeAddr: bootstrapNodeAddrs,
 		DataDir:           dataDir,
+		BootstrapNodeReg:  cliCtx.StringSlice(cmd.BootstrapNodeRegion.Name),
 		NoDiscovery:       cliCtx.Bool(cmd.NoDiscovery.Name),
 		IsPublisher:       cliCtx.Bool(cmd.IsPublisher.Name),
 		HostAddress:       cliCtx.String(cmd.P2PHost.Name),

@@ -78,7 +78,7 @@ func NewServer(ctx context.Context, cfg *Config) *Server {
 }
 
 func (s *Server) buildUDPAddr() error {
-	udpServer, err := net.ResolveUDPAddr("udp4", "43.200.145.206:30004")
+	udpServer, err := net.ResolveUDPAddr("udp4", "3.35.85.78:30004")
 	if err != nil {
 		return err
 	}
